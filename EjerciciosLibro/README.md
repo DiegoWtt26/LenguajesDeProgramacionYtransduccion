@@ -10,33 +10,6 @@ variantes y algunas preguntas teóricas.
 - Diego Moreno
 - Yeisson Rincon
 
-## Estructura del repositorio
-
-```
-.
-├── README.md
-├── ejercicio_1.md          # Respuesta teórica
-├── ejercicio_2.md          # Explicación + código
-├── ejercicio_2.l           # Scanner (Flex)
-├── ejercicio_2.y           # Parser (Bison)
-├── ejercicio_2_tab.c       # Parser generado por Bison
-├── ejercicio_2_tab.h       # Header generado por Bison
-├── eje2                    # Ejecutable compilado
-├── ejercicio_3.md          # Explicación + código
-├── ejercicio_3.l           # Scanner (Flex)
-├── ejercicio_3.y           # Parser (Bison)
-├── ejercicio_3_tab.c       # Parser generado por Bison
-├── ejercicio_3_tab.h       # Header generado por Bison
-├── eje3                    # Ejecutable compilado
-├── ejercicio_4.md          # Respuesta teórica
-├── ejercicio_5.md          # Respuesta teórica
-├── ejercicio_6.c           # Programa en C
-├── eje6                    # Ejecutable compilado
-└── capturas/                # Capturas de pantalla de ejecución
-    ├── ejercicio_2_ejecucion.png
-    ├── ejercicio_3_ejecucion.png
-    └── ejercicio_6_ejecucion.png
-```
 
 ---
 
