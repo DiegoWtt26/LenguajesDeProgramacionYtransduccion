@@ -1,0 +1,5 @@
+mostrar ventas
+cargar clientes
+graficar ingresos
+mostrar productos
+cargar reportes
