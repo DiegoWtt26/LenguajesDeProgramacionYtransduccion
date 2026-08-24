@@ -1,5 +1,13 @@
 # Actividad práctica ANTLR 4 — Lenguaje de instrucciones
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincon
+
+
+
 ## Descripción
 Se construyó un lenguaje simple con ANTLR 4 capaz de reconocer instrucciones del tipo:
 `mostrar ventas`, `cargar clientes`, `graficar ingresos`.
