@@ -1,5 +1,13 @@
 # Actividad práctica ANTLR 4 — Lenguaje de instrucciones
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincon
+
+
+
 ## Descripción
 Se construyó un lenguaje simple con ANTLR 4 capaz de reconocer instrucciones del tipo:
 `mostrar ventas`, `cargar clientes`, `graficar ingresos`.
@@ -63,19 +71,6 @@ grun Instruccion programa -tokens pruebas_validas.txt
 \`\`\`
 
 Resultado:
-\`\`\`
-[@0,0:6='mostrar',<'mostrar'>,1:0]
-[@1,8:13='ventas',<ID>,1:8]
-[@2,15:20='cargar',<'cargar'>,2:0]
-[@3,22:29='clientes',<ID>,2:7]
-[@4,31:38='graficar',<'graficar'>,3:0]
-[@5,40:47='ingresos',<ID>,3:9]
-[@6,49:55='mostrar',<'mostrar'>,4:0]
-[@7,57:65='productos',<ID>,4:8]
-[@8,67:72='cargar',<'cargar'>,5:0]
-[@9,74:81='reportes',<ID>,5:7]
-[@10,83:82='<EOF>',<EOF>,6:0]
-\`\`\`
 
 ![Tokens reconocidos](tokens.png)
 
@@ -87,9 +82,7 @@ grun Instruccion programa -tree pruebas_validas.txt
 \`\`\`
 
 Resultado:
-\`\`\`
-(programa (instruccion mostrar ventas) (instruccion cargar clientes) (instruccion graficar ingresos) (instruccion mostrar productos) (instruccion cargar reportes) <EOF>)
-\`\`\`
+
 
 ![Árbol sintáctico en texto](arbol_texto.png)
 
@@ -98,24 +91,16 @@ Resultado:
 ## Casos de error identificados
 
 **Error 1** — orden incorrecto de tokens (`error1.txt`: `ventas mostrar`)
-\`\`\`
-line 1:0 extraneous input 'ventas' expecting {'mostrar', 'cargar', 'graficar'}
-line 2:0 missing ID at '<EOF>'
-\`\`\`
 
 ![Error 1](error1.png)
 
 **Error 2** — instrucción incompleta, falta el ID (`error2.txt`: `graficar`)
-\`\`\`
-line 2:0 missing ID at '<EOF>'
-\`\`\`
+
 
 ![Error 2](error2.png)
 
 **Error 3** — palabra clave no definida en la gramática (`error3.txt`: `eliminar ventas`)
-\`\`\`
-line 1:0 mismatched input 'eliminar' expecting {'mostrar', 'cargar', 'graficar'}
-\`\`\`
+
 
 ![Error 3](error3.png)
 
