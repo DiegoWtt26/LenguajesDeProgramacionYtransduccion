@@ -162,7 +162,6 @@ WS     : [ \t]+ -> skip ;
 
 Un detalle importante: el orden de las alternativas en `expr` define la precedencia. ANTLR resuelve la ambigüedad de una gramática con recursión izquierda dándole mayor precedencia a las alternativas que aparecen primero, por eso `mulDiv` está antes que `addSub` — así se asegura que la multiplicación/división se evalúe antes que la suma/resta, tal como en matemáticas.
 
-![Paso 5](capturas/paso5.png)
 
 ### Sección 6 — ¿Qué reconoce esta gramática? (práctica + "ahora hazlo tú")
 
