@@ -905,3 +905,52 @@ Gramática  -->  Lexer  -->  Parser  -->  Árbol  -->  Visitor
 ```
 
 La idea central que atraviesa todo el ejercicio es que **la gramática define la sintaxis** (qué es válido escribir) y **el Visitor implementa la semántica** (qué significa lo que se escribió). Gracias a esta separación, fue posible extender el lenguaje pieza por pieza — agregar potencias, luego funciones, luego constantes, luego comandos, luego graficación — sin tener que reescribir lo ya construido en cada paso. Esta misma estrategia arquitectónica es la base de sistemas mucho más complejos: intérpretes de lenguajes de programación completos, compiladores, traductores entre formatos, analizadores estáticos de código y lenguajes de consulta. La calculadora científica desarrollada aquí es, en ese sentido, un primer ejemplo concreto y funcional de construcción de un DSL matemático usando ANTLR y el patrón Visitor.
+
+---
+
+## Instrucciones rápidas para clonar y ejecutar
+
+Estos son los comandos exactos que debe correr cualquier persona que quiera descargar y probar este proyecto desde cero.
+
+**1. Clonar el repositorio completo**
+
+```bash
+git clone https://github.com/DiegoWtt26/LenguajesDeProgramacionYtransduccion.git
+```
+
+**2. Entrar a la carpeta de esta actividad**
+
+```bash
+cd LenguajesDeProgramacionYtransduccion/ScientificCalculator
+```
+
+**3. Generar el lexer, el parser y el visitor a partir de la gramática**
+
+Requiere tener ANTLR 4 instalado y accesible como comando `antlr4` (ver [instalación oficial de ANTLR](https://github.com/antlr/antlr4/blob/master/doc/getting-started.md)).
+
+```bash
+antlr4 -no-listener -visitor ScientificCalc.g4
+```
+
+**4. Compilar todo el proyecto**
+
+Requiere el JDK de Java (no solo el JRE) instalado, versión 11 o superior.
+
+```bash
+javac *.java
+```
+
+**5. Ejecutar el intérprete**
+
+```bash
+java Main
+```
+
+A partir de aquí queda esperando instrucciones línea por línea. Por ejemplo:
+
+radio = 10
+area = pi * radio^2
+area
+sin(pi/2)
+plot(sin(x), -6.28, 6.28)
+
