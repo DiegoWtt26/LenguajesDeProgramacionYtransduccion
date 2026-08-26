@@ -1,0 +1,7 @@
+ScientificCalcLexer.java
+ScientificCalcParser.java
+ScientificCalcVisitor.java
+ScientificCalcBaseVisitor.java
+ScientificCalc*.tokens
+ScientificCalc*.interp
+*.class
