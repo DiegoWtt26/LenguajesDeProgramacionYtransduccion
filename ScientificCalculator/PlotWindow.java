@@ -4,13 +4,33 @@ import java.util.List;
 
 public class PlotWindow extends JPanel {
 
-    private List<Double> xs;
-    private List<Double> ys;
+    private List<List<Double>> seriesXs;
+    private List<List<Double>> seriesYs;
+    private boolean rangoFijo;
+    private double ymin;
+    private double ymax;
 
-    public PlotWindow(List<Double> xs, List<Double> ys) {
-        this.xs = xs;
-        this.ys = ys;
+    private static final Color[] COLORES = {
+        Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA
+    };
 
+    public PlotWindow(List<List<Double>> seriesXs, List<List<Double>> seriesYs) {
+        this.seriesXs = seriesXs;
+        this.seriesYs = seriesYs;
+        this.rangoFijo = false;
+        abrirVentana();
+    }
+
+    public PlotWindow(List<List<Double>> seriesXs, List<List<Double>> seriesYs, double ymin, double ymax) {
+        this.seriesXs = seriesXs;
+        this.seriesYs = seriesYs;
+        this.rangoFijo = true;
+        this.ymin = ymin;
+        this.ymax = ymax;
+        abrirVentana();
+    }
+
+    private void abrirVentana() {
         JFrame frame = new JFrame("Scientific Calculator");
         frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         frame.setSize(800, 600);
@@ -24,30 +44,49 @@ public class PlotWindow extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        if (xs.size() < 2) {
-            return;
+        double xmin = Double.POSITIVE_INFINITY;
+        double xmax = Double.NEGATIVE_INFINITY;
+        double yminCalc = Double.POSITIVE_INFINITY;
+        double ymaxCalc = Double.NEGATIVE_INFINITY;
+
+        for (int s = 0; s < seriesXs.size(); s++) {
+            for (double x : seriesXs.get(s)) {
+                if (x < xmin) xmin = x;
+                if (x > xmax) xmax = x;
+            }
+            for (double y : seriesYs.get(s)) {
+                if (y < yminCalc) yminCalc = y;
+                if (y > ymaxCalc) ymaxCalc = y;
+            }
         }
 
-        double xmin = xs.stream().mapToDouble(Double::doubleValue).min().orElse(-1);
-        double xmax = xs.stream().mapToDouble(Double::doubleValue).max().orElse(1);
-        double ymin = ys.stream().mapToDouble(Double::doubleValue).min().orElse(-1);
-        double ymax = ys.stream().mapToDouble(Double::doubleValue).max().orElse(1);
+        double yminUsado = rangoFijo ? ymin : yminCalc;
+        double ymaxUsado = rangoFijo ? ymax : ymaxCalc;
 
-        for (int i = 1; i < xs.size(); i++) {
+        for (int s = 0; s < seriesXs.size(); s++) {
+            List<Double> xs = seriesXs.get(s);
+            List<Double> ys = seriesYs.get(s);
 
-            double x1 = xs.get(i - 1);
-            double y1 = ys.get(i - 1);
+            if (xs.size() < 2) continue;
 
-            double x2 = xs.get(i);
-            double y2 = ys.get(i);
+            g2.setColor(COLORES[s % COLORES.length]);
 
-            int px1 = (int) ((x1 - xmin) / (xmax - xmin) * getWidth());
-            int py1 = getHeight() - (int) ((y1 - ymin) / (ymax - ymin) * getHeight());
+            for (int i = 1; i < xs.size(); i++) {
 
-            int px2 = (int) ((x2 - xmin) / (xmax - xmin) * getWidth());
-            int py2 = getHeight() - (int) ((y2 - ymin) / (ymax - ymin) * getHeight());
+                double x1 = xs.get(i - 1);
+                double y1 = ys.get(i - 1);
 
-            g2.drawLine(px1, py1, px2, py2);
+                double x2 = xs.get(i);
+                double y2 = ys.get(i);
+
+                int px1 = (int) ((x1 - xmin) / (xmax - xmin) * getWidth());
+                int py1 = getHeight() - (int) ((y1 - yminUsado) / (ymaxUsado - yminUsado) * getHeight());
+
+                int px2 = (int) ((x2 - xmin) / (xmax - xmin) * getWidth());
+                int py2 = getHeight() - (int) ((y2 - yminUsado) / (ymaxUsado - yminUsado) * getHeight());
+
+                g2.drawLine(px1, py1, px2, py2);
+            }
         }
     }
 }

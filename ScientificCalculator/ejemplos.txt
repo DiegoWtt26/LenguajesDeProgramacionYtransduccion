@@ -1,28 +1,73 @@
 2+2
+10-3
+10*5
+20/4
 2+3*4
 (2+3)*4
 
-a = 10
-b = 20
-
-a+b
-a*b
-
-sqrt(25)
+radio = 10
+altura = 5
+radio
+altura
 
 2^8
+10^2
+2^3+4
+2*3^2
 
-pi
-2*pi
+-10
+-2+5
 
 sin(pi/2)
 cos(0)
-
+tan(0)
+sqrt(25)
 log(100)
 ln(e)
+abs(-15)
+exp(1)
+
+asin(1)
+acos(1)
+atan(1)
+floor(3.7)
+ceil(3.2)
+
+pow(2,8)
+max(10,25)
+min(10,25)
+
+pi
+e
+2*pi
+pi/4
+
+area = pi * radio^2
+area
+perimetro = 2*pi*radio
+perimetro
 
 vars
 
-plot(x^2,-10,10)
+clear
 
-plot(sin(x),-6.28,6.28)
+vars
+
+radio = 7
+area2 = pi * radio^2
+area2
+
+f(x) = x^2 + 2*x + 1
+f(5)
+f(0)
+f(-1)
+
+plot(x^2, -10, 10)
+
+plot(sin(x), -6.28, 6.28)
+
+plot(sin(x), -6.28, 6.28, -2, 2)
+
+plot(sin(x); cos(x), -6.28, 6.28)
+
+plot(f(x), -10, 10)

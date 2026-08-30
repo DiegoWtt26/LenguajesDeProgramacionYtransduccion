@@ -7,6 +7,8 @@ public class ScientificEvalVisitor
         extends ScientificCalcBaseVisitor<Double> {
 
     Map<String, Double> memory = new HashMap<>();
+    Map<String, String> funcParams = new HashMap<>();
+    Map<String, ScientificCalcParser.ExprContext> funcBodies = new HashMap<>();
 
     @Override
     public Double visitNumber(ScientificCalcParser.NumberContext ctx) {
@@ -84,9 +86,69 @@ public class ScientificEvalVisitor
             case "ln": return Math.log(value);
             case "abs": return Math.abs(value);
             case "exp": return Math.exp(value);
+            case "asin":  return Math.asin(value);
+            case "acos":  return Math.acos(value);
+            case "atan":  return Math.atan(value);
+            case "floor": return Math.floor(value);
+            case "ceil":  return Math.ceil(value);
             default:
                 throw new RuntimeException("Funcion desconocida: " + function);
         }
+    }
+
+    @Override
+    public Double visitFunctionCall2(ScientificCalcParser.FunctionCall2Context ctx) {
+        String function = ctx.function2().getText();
+        double a = visit(ctx.expr(0));
+        double b = visit(ctx.expr(1));
+
+        switch (function) {
+            case "pow": return Math.pow(a, b);
+            case "max": return Math.max(a, b);
+            case "min": return Math.min(a, b);
+            default:
+                throw new RuntimeException("Funcion desconocida: " + function);
+        }
+    }
+
+    @Override
+    public Double visitFuncDef(ScientificCalcParser.FuncDefContext ctx) {
+        String nombreFuncion = ctx.ID(0).getText();
+        String nombreParametro = ctx.ID(1).getText();
+
+        funcParams.put(nombreFuncion, nombreParametro);
+        funcBodies.put(nombreFuncion, ctx.expr());
+
+        System.out.println("Funcion definida: " + nombreFuncion + "(" + nombreParametro + ")");
+        return 0.0;
+    }
+
+    @Override
+    public Double visitUserFunctionCall(ScientificCalcParser.UserFunctionCallContext ctx) {
+        String nombreFuncion = ctx.ID().getText();
+
+        if (!funcBodies.containsKey(nombreFuncion)) {
+            System.err.println("Funcion no definida: " + nombreFuncion);
+            return 0.0;
+        }
+
+        String nombreParametro = funcParams.get(nombreFuncion);
+        ScientificCalcParser.ExprContext cuerpo = funcBodies.get(nombreFuncion);
+
+        double valorArgumento = visit(ctx.expr());
+
+        Double valorPrevio = memory.get(nombreParametro);
+        memory.put(nombreParametro, valorArgumento);
+
+        double resultado = visit(cuerpo);
+
+        if (valorPrevio != null) {
+            memory.put(nombreParametro, valorPrevio);
+        } else {
+            memory.remove(nombreParametro);
+        }
+
+        return resultado;
     }
 
     @Override
@@ -131,26 +193,40 @@ public class ScientificEvalVisitor
 
     @Override
     public Double visitPlotExpr(ScientificCalcParser.PlotExprContext ctx) {
-        double xmin = visit(ctx.expr(1));
-        double xmax = visit(ctx.expr(2));
+        double xmin = visit(ctx.xmin);
+        double xmax = visit(ctx.xmax);
 
         int samples = 800;
 
-        List<Double> xs = new ArrayList<>();
-        List<Double> ys = new ArrayList<>();
+        List<List<Double>> seriesXs = new ArrayList<>();
+        List<List<Double>> seriesYs = new ArrayList<>();
 
-        for (int i = 0; i < samples; i++) {
-            double x = xmin + i * (xmax - xmin) / (samples - 1);
-            memory.put("x", x);
-            double y = visit(ctx.expr(0));
+        for (var funcExpr : ctx.funcs) {
+            List<Double> xs = new ArrayList<>();
+            List<Double> ys = new ArrayList<>();
 
-            if (Double.isFinite(y)) {
-                xs.add(x);
-                ys.add(y);
+            for (int i = 0; i < samples; i++) {
+                double x = xmin + i * (xmax - xmin) / (samples - 1);
+                memory.put("x", x);
+                double y = visit(funcExpr);
+
+                if (Double.isFinite(y)) {
+                    xs.add(x);
+                    ys.add(y);
+                }
             }
+
+            seriesXs.add(xs);
+            seriesYs.add(ys);
         }
 
-        new PlotWindow(xs, ys);
+        if (ctx.ymin != null && ctx.ymax != null) {
+            double ymin = visit(ctx.ymin);
+            double ymax = visit(ctx.ymax);
+            new PlotWindow(seriesXs, seriesYs, ymin, ymax);
+        } else {
+            new PlotWindow(seriesXs, seriesYs);
+        }
 
         return 0.0;
     }
