@@ -15,16 +15,18 @@ Este proyecto construye, de forma incremental, un pequeño lenguaje de dominio e
 
 - Evaluar expresiones matemáticas con precedencia de operadores correcta.
 - Almacenar y reutilizar variables (tabla de símbolos).
-- Calcular potencias, usar operadores unarios y funciones científicas (`sin`, `cos`, `tan`, `sqrt`, `log`, `ln`, `abs`, `exp`).
+- Calcular potencias, usar operadores unarios y funciones científicas (`sin`, `cos`, `tan`, `sqrt`, `log`, `ln`, `abs`, `exp`, `asin`, `acos`, `atan`, `floor`, `ceil`).
+- Usar funciones de dos argumentos (`pow`, `max`, `min`).
 - Usar constantes matemáticas (`pi`, `e`).
 - Ejecutar comandos de utilidad (`clear`, `vars`).
-- **Graficar funciones** en una ventana Swing, evaluando la misma expresión cientos de veces con distintos valores de `x`.
+- **Graficar funciones** en una ventana Swing, con rango vertical opcional y soporte para varias funciones en la misma gráfica.
+- **Definir funciones propias del usuario** (`f(x) = x^2 + 2*x + 1`) y usarlas como cualquier otra función, incluso dentro de `plot`.
 
 La arquitectura general de todo el intérprete es siempre la misma, sin importar cuánto crezca el lenguaje:
 
-```
+~~~
 Entrada de texto  -->  Lexer  -->  Tokens  -->  Parser  -->  Árbol sintáctico  -->  Visitor  -->  Resultado
-```
+~~~
 
 - El **Lexer** convierte el texto crudo en una secuencia de tokens (números, identificadores, operadores, palabras clave).
 - El **Parser** organiza esos tokens en un árbol sintáctico, siguiendo las reglas que se definieron en la gramática.
@@ -40,49 +42,93 @@ La idea central de todo el laboratorio es entender que **la gramática define la
 
 ## Estructura de esta carpeta
 
-```
+~~~
 ScientificCalculator/
 ├── README.md
 ├── .gitignore
 ├── capturas/
-│   └── pasoN.png                    Evidencia de cada paso del laboratorio
+│   ├── pasoN.png                    Evidencia de cada paso del laboratorio base
+│   └── retoN.png                    Evidencia de los 5 retos opcionales
 ├── ScientificCalc.g4                Gramática ANTLR (código fuente principal)
 ├── Main.java                        Programa principal (arma el pipeline lexer-parser-visitor)
 ├── ScientificEvalVisitor.java       Implementación del patrón Visitor (la semántica del lenguaje)
-├── PlotWindow.java                  Ventana Swing que dibuja la función graficada
+├── PlotWindow.java                  Ventana Swing que dibuja la(s) función(es) graficada(s)
 └── ejemplos.txt                     Archivo de prueba con instrucciones de ejemplo
-```
+~~~
 
 Los archivos que ANTLR genera automáticamente a partir de `ScientificCalc.g4` (`ScientificCalcLexer.java`, `ScientificCalcParser.java`, `ScientificCalcVisitor.java`, `ScientificCalcBaseVisitor.java`, y los `*.tokens`/`*.interp`) **no se suben al repositorio**. No son código escrito por el equipo, son un derivado reproducible del `.g4`, y por convención en cualquier proyecto que usa un generador de código (ANTLR, protobuf, etc.) solo se versiona la fuente real, no lo generado. Por eso están listados en `.gitignore`.
 
-## Cómo ejecutar el proyecto
+## Instrucciones para descargar y ejecutar el proyecto
 
-Clona el repositorio y entra a esta carpeta. Luego:
+A continuación se detallan, paso a paso, los comandos exactos que debe correr cualquier persona que quiera descargar y probar este proyecto desde cero, sin conocimiento previo del repositorio.
 
-```bash
+### 1. Requisitos previos
+
+- **Java JDK** 11 o superior instalado (no solo el JRE, porque se necesita el compilador `javac`). Se puede verificar con:
+  ~~~bash
+  javac -version
+  ~~~
+- **ANTLR 4** instalado y accesible como comando `antlr4` desde la terminal. La forma más común de instalarlo en Linux es descargar el jar oficial y agregarlo al `CLASSPATH`, siguiendo la guía oficial de instalación de ANTLR (https://github.com/antlr/antlr4/blob/master/doc/getting-started.md). Se puede verificar con:
+  ~~~bash
+  antlr4
+  ~~~
+  (debería mostrar la ayuda de la herramienta, no un error de "comando no encontrado").
+
+### 2. Clonar el repositorio
+
+~~~bash
+git clone https://github.com/DiegoWtt26/LenguajesDeProgramacionYtransduccion.git
+~~~
+
+### 3. Entrar a la carpeta de esta actividad
+
+~~~bash
+cd LenguajesDeProgramacionYtransduccion/ScientificCalculator
+~~~
+
+### 4. Generar el lexer, el parser y el visitor a partir de la gramática
+
+Este paso es obligatorio siempre que se clona el repositorio por primera vez, porque estos archivos generados no vienen incluidos (ver la nota en la sección anterior):
+
+~~~bash
 antlr4 -no-listener -visitor ScientificCalc.g4
+~~~
+
+Esto crea cuatro archivos nuevos en la misma carpeta: `ScientificCalcLexer.java`, `ScientificCalcParser.java`, `ScientificCalcVisitor.java`, `ScientificCalcBaseVisitor.java`.
+
+### 5. Compilar todo el proyecto
+
+~~~bash
 javac *.java
+~~~
+
+Esto compila tanto los archivos generados en el paso anterior como los archivos escritos a mano (`Main.java`, `ScientificEvalVisitor.java`, `PlotWindow.java`).
+
+### 6. Ejecutar el intérprete
+
+~~~bash
 java Main
-```
+~~~
 
-El primer comando regenera el lexer, el parser y el visitor base a partir de la gramática. El segundo compila todo el proyecto (tanto lo generado como el código escrito a mano). El tercero arranca el intérprete, que queda esperando instrucciones por consola, línea por línea.
+El programa queda esperando instrucciones por consola, línea por línea. Por ejemplo:
 
-Ejemplo de sesión:
-
-```
+~~~
 radio = 10
 area = pi * radio^2
 area
 sin(pi/2)
-sqrt(25)
 plot(sin(x), -6.28, 6.28)
-```
+~~~
 
-Para correr un archivo de instrucciones completo en vez de escribir a mano:
+Para terminar la sesión, se cierra la entrada con `Ctrl+D` (Linux/Mac) o `Ctrl+Z` seguido de Enter (Windows).
 
-```bash
+### Alternativa: ejecutar el archivo de ejemplos incluido
+
+En vez de escribir instrucciones a mano, se puede correr de una sola vez el archivo `ejemplos.txt`, que ya contiene un recorrido completo por todas las capacidades del lenguaje (incluyendo los 5 retos opcionales):
+
+~~~bash
 java Main < ejemplos.txt
-```
+~~~
 
 ---
 
@@ -94,7 +140,7 @@ A continuación se documenta cada sección del laboratorio guía, en el mismo or
 
 Antes de escribir la gramática propia, se repasó el ejemplo clásico de calculadora del libro guía, cuya regla de expresiones usa etiquetas como estas:
 
-```antlr
+~~~antlr
 expr
     : expr op=('*'|'/') expr # MulDiv
     | expr op=('+'|'-') expr # AddSub
@@ -102,7 +148,7 @@ expr
     | ID                     # id
     | '(' expr ')'           # parens
     ;
-```
+~~~
 
 **Pregunta de análisis:** ¿por qué conviene tener un método distinto para una suma, una multiplicación y un número, en lugar de un único método genérico?
 
@@ -112,11 +158,11 @@ expr
 
 Se creó la carpeta `ScientificCalculator/` con la estructura inicial mínima:
 
-```bash
+~~~bash
 mkdir ScientificCalculator
 cd ScientificCalculator
 touch ScientificCalc.g4 Main.java ScientificEvalVisitor.java PlotWindow.java ejemplos.txt
-```
+~~~
 
 Todos los archivos que ANTLR genera a partir de la gramática (lexer, parser, visitor base) se crean automáticamente en pasos posteriores; no se escriben a mano.
 
@@ -128,7 +174,7 @@ Se escribió la primera versión de `ScientificCalc.g4`, con tres reglas princip
 - `stat`: una instrucción, que puede ser imprimir una expresión, asignar una variable, o una línea en blanco.
 - `expr`: una expresión aritmética, con multiplicación/división, suma/resta, números, identificadores y paréntesis.
 
-```antlr
+~~~antlr
 grammar ScientificCalc;
 
 prog
@@ -158,10 +204,9 @@ NUMBER : [0-9]+ ('.' [0-9]+)? ;
 ID     : [a-zA-Z_][a-zA-Z_0-9]* ;
 NEWLINE: '\r'? '\n' ;
 WS     : [ \t]+ -> skip ;
-```
+~~~
 
 Un detalle importante: el orden de las alternativas en `expr` define la precedencia. ANTLR resuelve la ambigüedad de una gramática con recursión izquierda dándole mayor precedencia a las alternativas que aparecen primero, por eso `mulDiv` está antes que `addSub` — así se asegura que la multiplicación/división se evalúe antes que la suma/resta, tal como en matemáticas.
-
 
 ### Sección 6 — ¿Qué reconoce esta gramática? (práctica + "ahora hazlo tú")
 
@@ -173,10 +218,10 @@ La regla `ID: [a-zA-Z_][a-zA-Z_0-9]*` reconoce identificadores que **empiezan** 
 
 **Ejercicio práctico:** se generó el lexer y se probó con la herramienta `grun` (TestRig de ANTLR) si distintos textos son reconocidos como un único token `ID`:
 
-```bash
+~~~bash
 antlr4 -no-listener -visitor ScientificCalc.g4
 echo "variable" | grun ScientificCalc prog -tokens
-```
+~~~
 
 | Texto de entrada | Tokens producidos | ¿Un solo ID? | Explicación |
 |---|---|---|---|
@@ -194,9 +239,9 @@ echo "variable" | grun ScientificCalc prog -tokens
 
 Se ejecutó el generador de código de ANTLR indicando explícitamente que se quiere la variante Visitor (y no Listener, que es la otra estrategia de recorrido de árboles que ofrece ANTLR):
 
-```bash
+~~~bash
 antlr4 -no-listener -visitor ScientificCalc.g4
-```
+~~~
 
 Esto produce cuatro archivos nuevos:
 
@@ -213,7 +258,7 @@ Esto confirma en la práctica lo discutido en la sección 3: cada etiqueta de la
 
 Se creó `ScientificEvalVisitor.java`, la clase que va a contener toda la implementación real del lenguaje (la semántica), extendiendo la clase generada `ScientificCalcBaseVisitor`:
 
-```java
+~~~java
 import java.util.HashMap;
 import java.util.Map;
 
@@ -222,7 +267,7 @@ public class ScientificEvalVisitor
 
     Map<String, Double> memory = new HashMap<>();
 }
-```
+~~~
 
 El parámetro genérico `<Double>` indica que cada método `visit...` va a devolver un valor de tipo `Double` — es decir, evaluar cualquier parte del árbol siempre produce un número real. Esta es una diferencia importante frente al ejemplo clásico del libro (que trabaja con `Integer`): al usar `double` desde el principio, la calculadora puede manejar decimales, raíces, logaritmos y trigonometría sin perder precisión ni tener que hacer conversiones de tipo más adelante.
 
@@ -234,7 +279,7 @@ El `Map<String, Double> memory` es la tabla de símbolos: asocia el nombre de ca
 
 Se implementó el primer método real, `visitNumber`, que se ejecuta cada vez que el árbol contiene un nodo de tipo número:
 
-```java
+~~~java
 @Override
 public Double visitNumber(
         ScientificCalcParser.NumberContext ctx) {
@@ -243,7 +288,7 @@ public Double visitNumber(
         ctx.NUMBER().getText()
     );
 }
-```
+~~~
 
 `ctx.NUMBER()` obtiene el token concreto que el lexer reconoció (por ejemplo, el texto `"3.1416"`), `.getText()` extrae ese texto tal cual apareció en la entrada, y `Double.parseDouble(...)` lo convierte al tipo numérico `double` de Java. Este es el caso base de toda la recursión del Visitor: en algún punto, cualquier expresión termina en un número literal.
 
@@ -251,7 +296,7 @@ public Double visitNumber(
 
 Se implementó `visitAddSub`:
 
-```java
+~~~java
 @Override
 public Double visitAddSub(
         ScientificCalcParser.AddSubContext ctx) {
@@ -265,7 +310,7 @@ public Double visitAddSub(
 
     return left - right;
 }
-```
+~~~
 
 Aquí aparece la idea central de todo el patrón Visitor: `visit(ctx.expr(0))` no evalúa directamente un número, sino que **vuelve a llamar al Visitor sobre el subárbol izquierdo**, sea cual sea su tipo (puede ser otro `AddSub`, un `MulDiv`, un número, una variable...). Esa llamada recursiva es la que hace que expresiones arbitrariamente anidadas, como `2 + 3 * (4 - 1)`, se evalúen correctamente sin que el código tenga que saber de antemano cuán compleja es la expresión. `ctx.op` es el token del operador capturado por la etiqueta `op=('+'|'-')` de la gramática, y `.getType()` permite comparar contra las constantes generadas (`ADD`, `SUB`) para decidir qué operación aplicar.
 
@@ -273,7 +318,7 @@ Aquí aparece la idea central de todo el patrón Visitor: `visit(ctx.expr(0))` n
 
 **Ahora hazlo tú:** siguiendo exactamente el mismo patrón, se implementó `visitMulDiv`, esta vez comparando contra `MUL` y `DIV`:
 
-```java
+~~~java
 @Override
 public Double visitMulDiv(
         ScientificCalcParser.MulDivContext ctx) {
@@ -287,7 +332,7 @@ public Double visitMulDiv(
 
     return left / right;
 }
-```
+~~~
 
 ![Paso 10.2](capturas/paso10b.png)
 
@@ -295,14 +340,14 @@ public Double visitMulDiv(
 
 Se implementó `visitParens`:
 
-```java
+~~~java
 @Override
 public Double visitParens(
         ScientificCalcParser.ParensContext ctx) {
 
     return visit(ctx.expr());
 }
-```
+~~~
 
 Este método parece trivial (solo delega en la expresión interna, sin hacer ninguna operación adicional), pero es crucial: los paréntesis no cambian el *valor* de una expresión, pero sí cambian la *forma del árbol sintáctico*, y por lo tanto el orden en que se evalúan las operaciones. Por ejemplo, `2 + 3 * 4` y `(2 + 3) * 4` producen árboles distintos, y por eso dan resultados distintos (`14` vs `20`), aunque ambos usan los mismos números y operadores.
 
@@ -312,7 +357,7 @@ Este método parece trivial (solo delega en la expresión interna, sin hacer nin
 
 Se creó `Main.java`, que arma el pipeline completo lexer → tokens → parser → árbol → visitor:
 
-```java
+~~~java
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.*;
 
@@ -332,7 +377,7 @@ public class Main {
         visitor.visit(tree);
     }
 }
-```
+~~~
 
 Cada línea corresponde a una etapa del pipeline: `CharStreams.fromStream(System.in)` lee los caracteres de la entrada estándar; el `Lexer` los convierte en tokens; el `CommonTokenStream` es un buffer que el parser va consumiendo; `parser.prog()` invoca la regla raíz de la gramática y devuelve la raíz del árbol sintáctico; y finalmente `visitor.visit(tree)` empieza a recorrer ese árbol, disparando en cascada todos los métodos `visit...` que se necesiten.
 
@@ -342,7 +387,7 @@ Cada línea corresponde a una etapa del pipeline: `CharStreams.fromStream(System
 
 Hasta este punto, el intérprete evalúa expresiones pero no muestra nada. Se implementó `visitPrintExpr`, que se dispara cada vez que una línea completa es solo una expresión (no una asignación):
 
-```java
+~~~java
 @Override
 public Double visitPrintExpr(
         ScientificCalcParser.PrintExprContext ctx) {
@@ -351,7 +396,7 @@ public Double visitPrintExpr(
     System.out.println(value);
     return value;
 }
-```
+~~~
 
 ![Paso 13](capturas/paso13.png)
 
@@ -359,10 +404,10 @@ public Double visitPrintExpr(
 
 Con lo implementado hasta aquí (números, suma, resta, multiplicación, división, paréntesis, impresión), ya es posible compilar y ejecutar una calculadora aritmética funcional:
 
-```bash
+~~~bash
 javac *.java
 java Main
-```
+~~~
 
 | Expresión | Resultado esperado |
 |---|---|
@@ -381,7 +426,7 @@ El caso `2+3*4 = 14.0` (y no `20.0`) confirma que la precedencia de operadores d
 
 Se implementaron `visitAssign` (para guardar un valor en la tabla de símbolos) y `visitId` (para recuperarlo):
 
-```java
+~~~java
 @Override
 public Double visitAssign(
         ScientificCalcParser.AssignContext ctx) {
@@ -403,7 +448,7 @@ public Double visitId(
     System.err.println("Variable no definida: " + id);
     return 0.0;
 }
-```
+~~~
 
 `visitAssign` evalúa la expresión del lado derecho del `=`, y guarda el resultado en el mapa `memory` bajo el nombre del identificador. `visitId` hace lo contrario: cuando el árbol tiene un nodo identificador (por ejemplo, al usar `radio` dentro de `area = pi * radio^2`), busca ese nombre en `memory` y devuelve su valor.
 
@@ -413,12 +458,12 @@ public Double visitId(
 
 Se probó:
 
-```
+~~~
 a = 10
 b = 20
 a+b
 a*b
-```
+~~~
 
 obteniendo `30.0` y `200.0`, confirmando que la tabla de símbolos persiste correctamente entre líneas distintas.
 
@@ -430,7 +475,7 @@ obteniendo `30.0` y `200.0`, confirmando que la tabla de símbolos persiste corr
 
 Se extendió la gramática para reconocer el operador de potencia `^`:
 
-```antlr
+~~~antlr
 expr
     : <assoc=right> expr '^' expr   # power
     | expr op=('*'|'/') expr        # mulDiv
@@ -439,7 +484,7 @@ expr
     | ID                            # id
     | '(' expr ')'                  # parens
     ;
-```
+~~~
 
 Dos detalles importantes de esta regla:
 
@@ -448,7 +493,7 @@ Dos detalles importantes de esta regla:
 
 Se regeneró el proyecto y se implementó `visitPower`:
 
-```java
+~~~java
 @Override
 public Double visitPower(
         ScientificCalcParser.PowerContext ctx) {
@@ -458,7 +503,7 @@ public Double visitPower(
 
     return Math.pow(base, exponent);
 }
-```
+~~~
 
 ![Paso 17](capturas/paso17.png)
 ![Paso 17.5](capturas/paso17.5.png)
@@ -482,7 +527,7 @@ Se confirmaron ejecutando el intérprete, y los resultados coincidieron con lo c
 
 Se agregó una nueva regla léxica `function`, que agrupa las palabras clave reservadas para funciones científicas, y una nueva alternativa en `expr` para reconocer una llamada a función:
 
-```antlr
+~~~antlr
 expr
     : <assoc=right> expr '^' expr   # power
     | expr op=('*'|'/') expr        # mulDiv
@@ -496,11 +541,11 @@ expr
 function
     : 'sin' | 'cos' | 'tan' | 'sqrt' | 'log' | 'ln' | 'abs' | 'exp'
     ;
-```
+~~~
 
 Se implementó `visitFunctionCall`, que primero obtiene el nombre de la función invocada como texto, evalúa el argumento recursivamente, y luego usa un `switch` para llamar al método correspondiente de la clase `Math` de Java:
 
-```java
+~~~java
 @Override
 public Double visitFunctionCall(
         ScientificCalcParser.FunctionCallContext ctx) {
@@ -521,7 +566,7 @@ public Double visitFunctionCall(
             throw new RuntimeException("Funcion desconocida: " + function);
     }
 }
-```
+~~~
 
 Nótese la distinción entre `log` (logaritmo en base 10, `Math.log10`) y `ln` (logaritmo natural, base *e*, `Math.log`) — una fuente común de confusión, resuelta explícitamente con dos funciones separadas.
 
@@ -538,13 +583,13 @@ Se probaron `sqrt(25)`, `cos(0)`, `log(100)`, todas funcionando correctamente. `
 
 Se agregó una nueva alternativa a `expr` para reconocer un signo `+` o `-` antepuesto a una expresión (en vez de entre dos expresiones, como en la resta binaria):
 
-```antlr
+~~~antlr
 | op=('+'|'-') expr             # unary
-```
+~~~
 
 y se implementó `visitUnary`:
 
-```java
+~~~java
 @Override
 public Double visitUnary(
         ScientificCalcParser.UnaryContext ctx) {
@@ -556,7 +601,7 @@ public Double visitUnary(
     }
     return value;
 }
-```
+~~~
 
 Con esto, expresiones como `-10`, `abs(-10)` y `-2+5` ya se interpretan correctamente: el `-` inicial ya no se confunde con una resta binaria, sino que se reconoce como la negación de la expresión que le sigue.
 
@@ -568,17 +613,17 @@ Con esto, expresiones como `-10`, `abs(-10)` y `-2+5` ya se interpretan correcta
 
 Se agregó una regla léxica `constant` para `pi` y `e`, y una alternativa `constantExpr` en `expr`:
 
-```antlr
+~~~antlr
 | constant                      # constantExpr
 
 constant
     : 'pi' | 'e'
     ;
-```
+~~~
 
 Se implementó `visitConstantExpr`:
 
-```java
+~~~java
 @Override
 public Double visitConstantExpr(
         ScientificCalcParser.ConstantExprContext ctx) {
@@ -593,7 +638,7 @@ public Double visitConstantExpr(
     }
     return 0.0;
 }
-```
+~~~
 
 A diferencia de las variables (que se guardan en `memory` y el usuario puede sobrescribir), `pi` y `e` son constantes fijas del lenguaje: siempre devuelven el mismo valor, sin necesidad de que el usuario las defina primero.
 
@@ -621,13 +666,13 @@ Todos los resultados coincidieron con lo esperado, confirmando que el lenguaje y
 
 Se agregó una nueva instrucción (no una expresión, sino un comando) a la regla `stat`:
 
-```antlr
+~~~antlr
 | 'clear' NEWLINE            # clear
-```
+~~~
 
 e implementado `visitClear`:
 
-```java
+~~~java
 @Override
 public Double visitClear(
         ScientificCalcParser.ClearContext ctx) {
@@ -636,7 +681,7 @@ public Double visitClear(
     System.out.println("Memoria eliminada.");
     return 0.0;
 }
-```
+~~~
 
 Esto demuestra que el lenguaje no está limitado a expresiones matemáticas: también puede tener comandos imperativos que actúan sobre el estado del intérprete (en este caso, vaciando la tabla de símbolos).
 
@@ -647,11 +692,11 @@ Esto demuestra que el lenguaje no está limitado a expresiones matemáticas: tam
 
 De forma análoga, se agregó el comando `vars`, que lista todas las variables actualmente definidas:
 
-```antlr
+~~~antlr
 | 'vars' NEWLINE             # showVars
-```
+~~~
 
-```java
+~~~java
 @Override
 public Double visitShowVars(
         ScientificCalcParser.ShowVarsContext ctx) {
@@ -666,7 +711,7 @@ public Double visitShowVars(
     }
     return 0.0;
 }
-```
+~~~
 
 ![Paso 26](capturas/paso26.png)
 ![Paso 26.2](capturas/paso26.2.png)
@@ -687,9 +732,9 @@ La estrategia adoptada es: asignar un valor a `x` en la tabla de símbolos, volv
 
 Se diseñó la sintaxis del comando de graficación como `plot(expresion, xmin, xmax)`, por ejemplo `plot(sin(x), -6.28, 6.28)`, y se agregó a la gramática:
 
-```antlr
+~~~antlr
 | 'plot' '(' expr ',' expr ',' expr ')' NEWLINE  # plotExpr
-```
+~~~
 
 En esta regla, `ctx.expr(0)` corresponde a la expresión a graficar, `ctx.expr(1)` a `xmin`, y `ctx.expr(2)` a `xmax`.
 
@@ -699,7 +744,7 @@ En esta regla, `ctx.expr(0)` corresponde a la expresión a graficar, `ctx.expr(1
 
 Se implementó el muestreo de la función: se generan 800 puntos equiespaciados entre `xmin` y `xmax`, y para cada uno se reasigna `x` en la tabla de símbolos y se vuelve a evaluar la expresión:
 
-```java
+~~~java
 @Override
 public Double visitPlotExpr(
         ScientificCalcParser.PlotExprContext ctx) {
@@ -726,7 +771,9 @@ public Double visitPlotExpr(
     new PlotWindow(xs, ys);
     return 0.0;
 }
-```
+~~~
+
+*(Nota: esta versión inicial fue posteriormente reemplazada por una más completa al implementar los retos 3 y 4, ver más adelante.)*
 
 ### Sección 32 — Un problema interesante (análisis + "ahora hazlo tú")
 
@@ -738,7 +785,7 @@ El ejercicio propuesto era filtrar esos valores antes de agregarlos a las listas
 
 Se creó `PlotWindow.java`, una clase que extiende `JPanel` (de la librería gráfica Swing de Java) y que se embebe dentro de un `JFrame` (la ventana propiamente dicha):
 
-```java
+~~~java
 public class PlotWindow extends JPanel {
 
     private List<Double> xs;
@@ -755,9 +802,11 @@ public class PlotWindow extends JPanel {
         frame.setVisible(true);
     }
 }
-```
+~~~
 
 En este punto todavía no se dibuja nada visible; solo se abre una ventana vacía de 800x600 píxeles. El dibujo real se agrega en las secciones siguientes, sobrescribiendo el método `paintComponent`.
+
+*(Nota: esta clase fue posteriormente ampliada al implementar los retos 3 y 4, ver más adelante.)*
 
 ![Paso 33](capturas/paso33.png)
 
@@ -767,17 +816,17 @@ Estas tres partes se implementan juntas dentro de un único método `paintCompon
 
 **Encontrar los límites verticales:** mientras `xmin`/`xmax` vienen directamente del comando `plot`, los límites verticales (`ymin`/`ymax`) se calculan automáticamente a partir de los valores obtenidos en el muestreo, usando streams de Java:
 
-```java
+~~~java
 double ymin = ys.stream().mapToDouble(Double::doubleValue).min().orElse(-1);
 double ymax = ys.stream().mapToDouble(Double::doubleValue).max().orElse(1);
-```
+~~~
 
 **Transformar coordenadas:** los datos están en el sistema de coordenadas "matemático" (por ejemplo, `x` entre -10 y 10), pero deben dibujarse en el sistema de coordenadas "de píxeles" de la ventana (por ejemplo, entre 0 y 800). Esto requiere una transformación lineal por cada eje:
 
-```java
+~~~java
 int px = (int)((x - xmin) / (xmax - xmin) * getWidth());
 int py = getHeight() - (int)((y - ymin) / (ymax - ymin) * getHeight());
-```
+~~~
 
 El signo restado en `py` (`getHeight() - ...`) es necesario porque en los sistemas de coordenadas gráficas de Java (como en la mayoría de librerías gráficas), el eje Y crece **hacia abajo** (el píxel `(0,0)` está en la esquina superior izquierda), mientras que en matemáticas el eje Y crece hacia arriba. Sin esa inversión, la gráfica saldría "al revés" (volteada verticalmente).
 
@@ -789,15 +838,15 @@ El signo restado en `py` (`getHeight() - ...`) es necesario porque en los sistem
 
 Con todo lo anterior compilado, se ejecutó:
 
-```
+~~~
 plot(x^2,-10,10)
-```
+~~~
 
 obteniendo una ventana con una parábola dibujada correctamente. Se probó también:
 
-```
+~~~
 plot(sin(x),-6.28,6.28)
-```
+~~~
 
 confirmando la curva del seno en el rango de aproximadamente un ciclo completo (2π).
 
@@ -808,9 +857,9 @@ confirmando la curva del seno en el rango de aproximadamente un ciclo completo (
 
 Se creó `ejemplos.txt` con un conjunto representativo de instrucciones que ejercitan todas las capacidades del lenguaje (aritmética, variables, funciones, constantes, `vars`, `plot`), y se ejecutó de una sola vez redirigiendo el archivo como entrada estándar:
 
-```bash
+~~~bash
 java Main < ejemplos.txt
-```
+~~~
 
 ![Paso 38](capturas/paso38.png)
 
@@ -831,7 +880,7 @@ Para la expresión `sin(x) + 2*x^2`, se identificó a qué parte del árbol corr
 
 Prueba de integración final, combinando todas las características implementadas:
 
-```
+~~~
 radio = 10
 area = pi * radio^2
 area
@@ -841,7 +890,7 @@ cos(angulo)
 vars
 plot(sin(x), -6.28, 6.28)
 plot(x^2, -10, 10)
-```
+~~~
 
 Todo el conjunto se ejecutó correctamente, confirmando que el lenguaje completo funciona de manera integrada: variables persistentes, expresiones anidadas, funciones trigonométricas, el comando `vars`, y dos gráficas distintas.
 
@@ -865,13 +914,9 @@ Todo el conjunto se ejecutó correctamente, confirmando que el lenguaje completo
 
 8. **¿Qué sucede cuando se intenta graficar una función con una discontinuidad?** La evaluación en ese punto específico produce un valor no finito (`Infinity`, `-Infinity` o `NaN`); ese punto se filtra con `Double.isFinite(y)` antes de agregarlo a las listas de muestreo, de modo que la gráfica simplemente omite ese punto en vez de intentar dibujar un valor infinito.
 
-9. **¿Qué modificaciones serían necesarias para implementar funciones con dos argumentos?** Habría que cambiar la regla `function '(' expr ')'` por algo que acepte una lista de expresiones separadas por comas, por ejemplo `function '(' expr (',' expr)* ')'`, y ajustar `visitFunctionCall` para recibir una lista de valores en vez de uno solo, distinguiendo qué funciones esperan uno, dos, o más argumentos (por ejemplo `pow(base, exponente)` o `max(a, b)`).
+9. **¿Qué modificaciones serían necesarias para implementar funciones con dos argumentos?** Habría que cambiar la regla `function '(' expr ')'` por algo que acepte una lista de expresiones separadas por comas — esto se implementó efectivamente más adelante en el reto 2 (ver sección de retos).
 
-10. **¿Por qué la calculadora desarrollada puede considerarse un lenguaje de dominio específico (DSL)?** Porque, a diferencia de un lenguaje de propósito general (como Java o Python), este lenguaje fue diseñado exclusivamente para resolver un dominio de problemas muy acotado: cálculo matemático y visualización de funciones. No tiene, ni necesita tener, estructuras de control generales, funciones definidas por el usuario, tipos de datos complejos, ni la mayoría de las características de un lenguaje de propósito general — está optimizado para hacer una sola cosa bien.
-
-### Sección 42 — Retos (opcional, no realizados)
-
-El laboratorio propone cinco retos de extensión opcionales: agregar más funciones trigonométricas inversas (`asin`, `acos`, `atan`) y de redondeo (`floor`, `ceil`); soportar funciones con dos argumentos como `pow(2,8)` o `max(10,25)`; extender `plot` para aceptar un rango vertical explícito; permitir graficar varias funciones a la vez; y diseñar la posibilidad de definir funciones propias del usuario (`f(x) = x^2 + 2*x + 1`). Estos retos **no se implementaron** en esta entrega; el proyecto entregado corresponde al núcleo obligatorio del laboratorio (secciones 1 a 41, 43 y 44).
+10. **¿Por qué la calculadora desarrollada puede considerarse un lenguaje de dominio específico (DSL)?** Porque, a diferencia de un lenguaje de propósito general (como Java o Python), este lenguaje fue diseñado exclusivamente para resolver un dominio de problemas muy acotado: cálculo matemático y visualización de funciones.
 
 ### Sección 43 — Lista de comprobación (análisis)
 
@@ -899,11 +944,315 @@ Todos los ítems fueron implementados y verificados con evidencia en terminal (v
 
 El laboratorio partió de una gramática muy pequeña, capaz solo de sumar y restar, y la fue extendiendo progresivamente hasta obtener un pequeño lenguaje matemático completo con variables, funciones y graficación. La arquitectura se mantuvo constante durante todo el proceso:
 
-```
+~~~
 Gramática  -->  Lexer  -->  Parser  -->  Árbol  -->  Visitor
-```
+~~~
 
-La idea central que atraviesa todo el ejercicio es que **la gramática define la sintaxis** (qué es válido escribir) y **el Visitor implementa la semántica** (qué significa lo que se escribió). Gracias a esta separación, fue posible extender el lenguaje pieza por pieza — agregar potencias, luego funciones, luego constantes, luego comandos, luego graficación — sin tener que reescribir lo ya construido en cada paso. Esta misma estrategia arquitectónica es la base de sistemas mucho más complejos: intérpretes de lenguajes de programación completos, compiladores, traductores entre formatos, analizadores estáticos de código y lenguajes de consulta. La calculadora científica desarrollada aquí es, en ese sentido, un primer ejemplo concreto y funcional de construcción de un DSL matemático usando ANTLR y el patrón Visitor.
+La idea central que atraviesa todo el ejercicio es que **la gramática define la sintaxis** (qué es válido escribir) y **el Visitor implementa la semántica** (qué significa lo que se escribió). Gracias a esta separación, fue posible extender el lenguaje pieza por pieza — agregar potencias, luego funciones, luego constantes, luego comandos, luego graficación, y finalmente los cinco retos opcionales — sin tener que reescribir lo ya construido en cada paso. Esta misma estrategia arquitectónica es la base de sistemas mucho más complejos: intérpretes de lenguajes de programación completos, compiladores, traductores entre formatos, analizadores estáticos de código y lenguajes de consulta. La calculadora científica desarrollada aquí es, en ese sentido, un primer ejemplo concreto y funcional de construcción de un DSL matemático usando ANTLR y el patrón Visitor.
 
 ---
+
+## Sección 42 — Retos opcionales implementados
+
+El laboratorio propone cinco retos de extensión sobre el núcleo del lenguaje. Los cinco fueron diseñados e implementados, en el mismo orden en que aparecen en la guía.
+
+### Reto 1 — Nuevas funciones (`asin`, `acos`, `atan`, `floor`, `ceil`)
+
+El más directo de los cinco: se amplió la regla léxica `function`, agregando las cinco funciones nuevas junto a las ya existentes:
+
+~~~antlr
+function
+    : 'sin'
+    | 'cos'
+    | 'tan'
+    | 'sqrt'
+    | 'log'
+    | 'ln'
+    | 'abs'
+    | 'exp'
+    | 'asin'
+    | 'acos'
+    | 'atan'
+    | 'floor'
+    | 'ceil'
+    ;
+~~~
+
+Y se agregaron los `case` correspondientes en `visitFunctionCall`, cada uno mapeando a su equivalente de la clase `Math` de Java:
+
+~~~java
+case "asin":  return Math.asin(value);
+case "acos":  return Math.acos(value);
+case "atan":  return Math.atan(value);
+case "floor": return Math.floor(value);
+case "ceil":  return Math.ceil(value);
+~~~
+
+No fue necesario tocar `expr` ni ningún otro archivo, porque estas funciones siguen exactamente el mismo patrón sintáctico de un solo argumento que las funciones ya existentes (`sin(x)`, `sqrt(x)`, etc.).
+
+![Reto 1](capturas/reto1.png)
+![Reto 1.2](capturas/reto1.2.png)
+![Reto 1.3](capturas/reto1.3.png)
+
+Prueba realizada:
+~~~
+asin(1)
+acos(1)
+atan(1)
+floor(3.7)
+ceil(3.2)
+~~~
+Resultados obtenidos: `asin(1) ≈ 1.5708` (π/2), `acos(1) = 0.0`, `atan(1) ≈ 0.7854` (π/4), `floor(3.7) = 3.0`, `ceil(3.2) = 4.0`.
+
+### Reto 2 — Funciones con dos argumentos (`pow`, `max`, `min`)
+
+Este reto requirió separar las funciones de un argumento de las de dos, porque mezclarlas en una sola regla de gramática generaría ambigüedad (el parser no sabría, solo con ver una coma, si separa dos argumentos de la misma función o si empieza otro elemento). Se creó una regla léxica independiente, `function2`, y una alternativa nueva en `expr`:
+
+~~~antlr
+expr
+    : <assoc=right> expr '^' expr        # power
+    | expr op=('*'|'/') expr             # mulDiv
+    | expr op=('+'|'-') expr             # addSub
+    | function2 '(' expr ',' expr ')'    # functionCall2
+    | function '(' expr ')'              # functionCall
+    | op=('+'|'-') expr                  # unary
+    | constant                           # constantExpr
+    | NUMBER                             # number
+    | ID                                 # id
+    | '(' expr ')'                       # parens
+    ;
+
+function2
+    : 'pow'
+    | 'max'
+    | 'min'
+    ;
+~~~
+
+Se implementó `visitFunctionCall2`, que evalúa ambos argumentos (`ctx.expr(0)` y `ctx.expr(1)`) y aplica el método correspondiente:
+
+~~~java
+@Override
+public Double visitFunctionCall2(ScientificCalcParser.FunctionCall2Context ctx) {
+    String function = ctx.function2().getText();
+    double a = visit(ctx.expr(0));
+    double b = visit(ctx.expr(1));
+
+    switch (function) {
+        case "pow": return Math.pow(a, b);
+        case "max": return Math.max(a, b);
+        case "min": return Math.min(a, b);
+        default:
+            throw new RuntimeException("Funcion desconocida: " + function);
+    }
+}
+~~~
+
+![Reto 2](capturas/reto2.png)
+![Reto 2.2](capturas/reto2.2.png)
+![Reto 2.3](capturas/reto2.3.png)
+
+Prueba realizada:
+~~~
+pow(2,8)
+max(10,25)
+min(10,25)
+~~~
+Resultados obtenidos: `256.0`, `25.0`, `10.0`.
+
+### Reto 3 — Rango vertical explícito en `plot` (`plot(expr,xmin,xmax,ymin,ymax)`)
+
+Se hizo que el rango vertical fuera **opcional** en la gramática, usando un grupo opcional `(...)?` que agrupa las dos expresiones adicionales:
+
+~~~antlr
+| 'plot' '(' expr ',' expr ',' expr (',' expr ',' expr)? ')' NEWLINE   # plotExpr
+~~~
+
+Esto significa que `ctx.expr()` (la lista completa de expresiones dentro del `plot`) tiene **3 elementos** si no se especifica rango vertical, o **5** si sí se especifica. En `PlotWindow.java` se agregó un segundo constructor que recibe `ymin`/`ymax` explícitos, guardando internamente si se debe usar ese rango fijo o calcularlo automáticamente a partir de los datos (como se hacía antes):
+
+~~~java
+private boolean rangoFijo;
+private double ymin;
+private double ymax;
+
+public PlotWindow(List<Double> xs, List<Double> ys, double ymin, double ymax) {
+    this.xs = xs;
+    this.ys = ys;
+    this.rangoFijo = true;
+    this.ymin = ymin;
+    this.ymax = ymax;
+    abrirVentana();
+}
+~~~
+
+Y en `visitPlotExpr` se revisa cuántas expresiones vinieron para decidir cuál constructor usar:
+
+~~~java
+if (ctx.expr().size() == 5) {
+    double ymin = visit(ctx.expr(3));
+    double ymax = visit(ctx.expr(4));
+    new PlotWindow(xs, ys, ymin, ymax);
+} else {
+    new PlotWindow(xs, ys);
+}
+~~~
+
+![Reto 3](capturas/reto3.png)
+![Reto 3.2](capturas/reto3.2.png)
+![Reto 3.3](capturas/reto3.3.png)
+![Reto 3.4](capturas/reto3.4.png)
+
+Prueba realizada:
+~~~
+plot(sin(x), -6.28, 6.28)
+plot(sin(x), -6.28, 6.28, -2, 2)
+~~~
+La primera gráfica usa el rango vertical automático (ajustado a los valores reales del seno, entre -1 y 1). La segunda fuerza el eje Y entre -2 y 2, haciendo que la curva se vea "más comprimida" verticalmente, sin ocupar todo el alto de la ventana — confirmando visualmente que el rango fijo se respeta.
+
+### Reto 4 — Graficar varias funciones en la misma ventana (`plot(sin(x),cos(x),-6.28,6.28)`)
+
+El diseño más delicado de los cinco: con solo comas, la gramática no puede distinguir si un elemento adicional es otra función a graficar o es parte del rango numérico. La solución adoptada fue usar `;` (punto y coma) exclusivamente para separar funciones entre sí, dejando la coma reservada para los límites numéricos:
+
+~~~
+plot(sin(x); cos(x), -6.28, 6.28)
+~~~
+
+Se usaron **etiquetas de lista** de ANTLR (`funcs+=expr`) para acumular automáticamente todas las funciones en una lista, y etiquetas simples (`xmin=`, `xmax=`, `ymin=`, `ymax=`) para los límites, evitando tener que contar manualmente cuántos elementos había (como se hizo, de forma más artesanal, en el reto 3):
+
+~~~antlr
+| 'plot' '(' funcs+=expr (';' funcs+=expr)* ',' xmin=expr ',' xmax=expr (',' ymin=expr ',' ymax=expr)? ')' NEWLINE   # plotExpr
+~~~
+
+Con estas etiquetas, el `PlotExprContext` generado expone directamente `ctx.funcs` (una `List<ExprContext>`), `ctx.xmin`, `ctx.xmax`, `ctx.ymin`, `ctx.ymax` (estos dos últimos `null` si no se especificó rango vertical).
+
+`PlotWindow.java` se amplió para recibir listas de listas (una lista de curvas, cada una con sus propios puntos `x`/`y`), asignando un color distinto a cada curva desde un arreglo fijo:
+
+~~~java
+private static final Color[] COLORES = {
+    Color.BLUE, Color.RED, Color.GREEN, Color.ORANGE, Color.MAGENTA
+};
+~~~
+
+y calculando los límites de la ventana (`xmin`, `xmax`, `ymin`, `ymax`) considerando **todas** las curvas juntas, para que quepan simultáneamente. El método `visitPlotExpr` final recorre `ctx.funcs` con un simple `for`, repitiendo para cada función el mismo bucle de muestreo de 800 puntos que ya existía, pero acumulando los resultados en listas de listas:
+
+~~~java
+for (var funcExpr : ctx.funcs) {
+    List<Double> xs = new ArrayList<>();
+    List<Double> ys = new ArrayList<>();
+
+    for (int i = 0; i < samples; i++) {
+        double x = xmin + i * (xmax - xmin) / (samples - 1);
+        memory.put("x", x);
+        double y = visit(funcExpr);
+
+        if (Double.isFinite(y)) {
+            xs.add(x);
+            ys.add(y);
+        }
+    }
+
+    seriesXs.add(xs);
+    seriesYs.add(ys);
+}
+~~~
+
+![Reto 4](capturas/reto4.png)
+![Reto 4.2](capturas/reto4.2.png)
+![Reto 4.3](capturas/reto4.3.png)
+![Reto 4.4](capturas/reto4.4.png)
+![Reto 4.5](capturas/reto4.5.png)
+
+Prueba realizada:
+~~~
+plot(sin(x), -6.28, 6.28)
+plot(sin(x); cos(x), -6.28, 6.28)
+plot(sin(x); cos(x), -6.28, 6.28, -2, 2)
+~~~
+La primera confirma que la sintaxis original (una sola función) sigue funcionando sin cambios. La segunda muestra seno y coseno superpuestos en la misma ventana, cada uno con su color. La tercera combina esto con el reto 3, forzando además el rango vertical entre -2 y 2.
+
+### Reto 5 — Definir funciones propias del usuario (`f(x) = x^2 + 2*x + 1`)
+
+El reto más ambicioso: requiere que el lenguaje pueda **recordar una expresión sin evaluarla todavía** (el cuerpo de la función) y evaluarla más tarde, cada vez con un valor distinto para su parámetro — el mismo mecanismo ya usado para graficar, pero generalizado a cualquier función definida por el usuario, no solo a `x`.
+
+Se agregaron dos reglas nuevas a la gramática: una instrucción de definición (`funcDef`) y una llamada a función de usuario dentro de una expresión (`userFunctionCall`):
+
+~~~antlr
+stat
+    : expr NEWLINE                    # printExpr
+    | ID '(' ID ')' '=' expr NEWLINE  # funcDef
+    | ID '=' expr NEWLINE             # assign
+    ...
+    ;
+
+expr
+    : ...
+    | ID '(' expr ')'                 # userFunctionCall
+    ...
+    ;
+~~~
+
+En `funcDef`, hay dos tokens `ID` en la misma alternativa: `ctx.ID(0)` es el nombre de la función (`f`), `ctx.ID(1)` es el nombre de su parámetro (`x`). ANTLR distingue automáticamente esta alternativa de una asignación normal (`ID '=' expr`) y de una llamada (`ID '(' expr ')'`), simplemente por la forma de los tokens que siguen al primer identificador — no hay ambigüedad real, aunque se parezcan a simple vista.
+
+Se agregaron dos mapas nuevos al Visitor: uno que recuerda el nombre del parámetro de cada función definida, y otro que recuerda su cuerpo **sin evaluar** (el `ExprContext` tal cual, para revisitarlo después):
+
+~~~java
+Map<String, String> funcParams = new HashMap<>();
+Map<String, ScientificCalcParser.ExprContext> funcBodies = new HashMap<>();
+
+@Override
+public Double visitFuncDef(ScientificCalcParser.FuncDefContext ctx) {
+    String nombreFuncion = ctx.ID(0).getText();
+    String nombreParametro = ctx.ID(1).getText();
+
+    funcParams.put(nombreFuncion, nombreParametro);
+    funcBodies.put(nombreFuncion, ctx.expr());
+
+    System.out.println("Funcion definida: " + nombreFuncion + "(" + nombreParametro + ")");
+    return 0.0;
+}
+~~~
+
+La parte más delicada es `visitUserFunctionCall`: cuando se llama `f(5)`, hay que evaluar el cuerpo guardado de `f` (por ejemplo `x^2 + 2*x + 1`), pero ese cuerpo usa el nombre `x`, que podría chocar con una variable `x` que el usuario ya tuviera definida por otro lado (por ejemplo, si se estaba graficando algo previamente). Por eso se guarda y restaura el valor previo de esa variable:
+
+~~~java
+@Override
+public Double visitUserFunctionCall(ScientificCalcParser.UserFunctionCallContext ctx) {
+    String nombreFuncion = ctx.ID().getText();
+
+    String nombreParametro = funcParams.get(nombreFuncion);
+    ScientificCalcParser.ExprContext cuerpo = funcBodies.get(nombreFuncion);
+
+    double valorArgumento = visit(ctx.expr());
+
+    Double valorPrevio = memory.get(nombreParametro);
+    memory.put(nombreParametro, valorArgumento);
+
+    double resultado = visit(cuerpo);
+
+    if (valorPrevio != null) {
+        memory.put(nombreParametro, valorPrevio);
+    } else {
+        memory.remove(nombreParametro);
+    }
+
+    return resultado;
+}
+~~~
+
+Este "guardar y restaurar" es lo que permite, incluso, combinar llamadas a funciones de usuario con graficación o con otras variables sin que se pisen los valores entre sí.
+
+![Reto 5](capturas/reto5.png)
+![Reto 5.2](capturas/reto5.2.png)
+![Reto 5.3](capturas/reto5.3.png)
+![Reto 5.4](capturas/reto5.4.png)
+
+Prueba realizada:
+~~~
+f(x) = x^2 + 2*x + 1
+f(5)
+f(0)
+f(-1)
+plot(f(x), -10, 10)
+~~~
+Resultados obtenidos: `f(5) = 36.0`, `f(0) = 1.0`, `f(-1) = 0.0` (coincidiendo con el cálculo manual, ya que `f(x) = (x+1)²`). La gráfica muestra correctamente una parábola con su mínimo (valor 0) exactamente en `x = -1`, confirmando que la función definida por el usuario se integra sin fricción con el comando `plot`, tal como cualquier función incorporada del lenguaje.
 
