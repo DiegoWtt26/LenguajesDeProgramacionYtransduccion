@@ -11,6 +11,18 @@ public class ScientificEvalVisitor
     Map<String, ScientificCalcParser.ExprContext> funcBodies = new HashMap<>();
 
     @Override
+    public Double visitProg(ScientificCalcParser.ProgContext ctx) {
+        for (var stat : ctx.stat()) {
+            try {
+                visit(stat);
+            } catch (RuntimeException e) {
+                System.err.println("Error: " + e.getMessage());
+            }
+        }
+        return 0.0;
+    }
+
+    @Override
     public Double visitNumber(ScientificCalcParser.NumberContext ctx) {
         return Double.parseDouble(ctx.NUMBER().getText());
     }
