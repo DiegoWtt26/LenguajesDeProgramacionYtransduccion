@@ -46,6 +46,24 @@ python3 main.py
 
 Sin argumentos usa `casos.txt`. Formato del `.txt`: `expresion [| var=valor]`, `#` comentario.
 
+## Extra: derivación por la izquierda y por la derecha (`derivaciones.py`)
+
+Complemento a `main.py`. Muestra paso a paso la derivación por la izquierda
+y por la derecha de una expresión con la gramática por niveles de la
+diapo 11/12 (`E -> E + T | T ; T -> T * F | F ; F -> id|num|(E)`), reusando
+el mismo parser generado (`Expr12Lexer`/`Expr12Parser`).
+
+```bash
+cd "Tarea #2"
+python3 derivaciones.py "3 + 4 * 5"
+python3 derivaciones.py "3 + 4 * 5" "a + b * c" "(3 + 4) * 5"
+```
+
+Cada corrida imprime las dos secuencias de formas sentenciales (izquierda
+y derecha) y muestra que ambas terminan en la misma cadena de terminales:
+la gramática no es ambigua, solo cambia el orden en que se expanden los
+no-terminales, no el árbol resultante.
+
 ## Regenerar el parser
 
 ```bash
