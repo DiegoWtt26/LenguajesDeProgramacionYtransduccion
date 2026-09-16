@@ -1,0 +1,9 @@
+# Casos diapositiva 15 - Gramatica AMBIGUA TAL CUAL:
+#   E -> E + E | E * E | num
+# Una expresion por linea. # es comentario.
+# Uso:  python3 main.py casos.txt
+2 + 3 * 4
+2 * 3 + 4
+42
+2 + * 3
+a + b

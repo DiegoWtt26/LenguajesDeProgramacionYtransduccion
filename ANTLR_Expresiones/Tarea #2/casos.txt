@@ -1,0 +1,9 @@
+# Casos diapositivas 12 (Parse Tree) y 13 (AST)
+# Misma gramatica de la diapo 11: E->E+T|T, T->T*F|F, F->id|num|(E)
+# Formato por linea:  expresion  [| var=valor ...]
+# Uso:  python3 main.py casos.txt
+3 + 4 * 5
+a + b * c | a=2 b=3 c=4
+(3 + 4) * 5
+7
+3 + * 5

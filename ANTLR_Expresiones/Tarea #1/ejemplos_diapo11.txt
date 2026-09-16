@@ -1,0 +1,21 @@
+DIAPOSITIVA 11 - PRUEBA DE ACEPTACION CON GRAMATICA TAL CUAL
+Gramatica TAL CUAL del PDF:
+  E -> E + T | T
+  T -> T * F | F
+  F -> id | num | ( E )
+
+Comprobado con: python3 main.py casos.txt
+(Requisito: pip3 install antlr4-python3-runtime==4.13.2)
+
+[1] 2 + 3 * 4            -> ACEPTADA, eval = 14  (2+(3*4))
+[2] 2 + 3 - 4            -> RECHAZADA (la regla E solo define '+', no hay E -> E - T)
+[3] 2 + 3 * (4 - 5)      -> RECHAZADA (el '-' dentro del parentesis no existe en la gramatica)
+[4] 2 + 3 * (4 + 5)      -> ACEPTADA, eval = 29  (version con '+' del caso 3)
+[5] a + b * c | a=2 b=3 c=4 -> ACEPTADA, eval = 14
+[6] (2 + 3) * 4          -> ACEPTADA, eval = 20  (parentesis alteran precedencia)
+[7] 42                   -> ACEPTADA, eval = 42
+[8] 2 + * 3              -> RECHAZADA (sintaxis invalida)
+
+Conclusion: 5 ACEPTADAS / 3 RECHAZADAS.
+El PDF pide '-' en 2 ejemplos pero no lo define en las reglas;
+con la gramatica TAL CUAL lo correcto es RECHAZARLOS y el .py asi lo reporta.

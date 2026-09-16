@@ -1,0 +1,17 @@
+# Casos diapositiva 11 - Gramatica TAL CUAL:
+#   E -> E + T | T
+#   T -> T * F | F
+#   F -> id | num | ( E )
+# Formato por linea:  expresion  [| var=valor ...]
+#   - Lineas vacias y lineas que empiezan con # se ignoran.
+#   - despues de '|' van asignaciones para identificadores, ej: a=2 b=3
+# Uso:  python3 main.py casos.txt
+#       python3 main.py "2 + 3 * 4"
+2 + 3 * 4
+2 + 3 - 4
+2 + 3 * (4 - 5)
+2 + 3 * (4 + 5)
+a + b * c | a=2 b=3 c=4
+(2 + 3) * 4
+42
+2 + * 3
