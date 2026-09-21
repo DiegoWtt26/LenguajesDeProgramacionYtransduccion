@@ -1,0 +1,48 @@
+# Casos GENERALIZADO: asociatividad (diapo 27) y precedencia (diapos 29-30)
+# Una expresion por linea. # es comentario.
+# G1 = izquierda+correcta | G2 = derecha+correcta
+# G3 = izquierda+invertida | G4 = plana (todo a la izquierda)
+# Uso:  python3 main.py casos.txt
+# --- 1. Asociatividad: cadenas del mismo nivel (diapo 27) ---
+4 - 3 - 2
+# => G1=-1 ((4-3)-2) | G2=3 (4-(3-2)) | G3=-1 | G4=-1
+8 / 4 / 2
+# => G1=1 ((8/4)/2) | G2=4 (8/(4/2)) | G3=1 | G4=1
+10 - 2 + 3
+# => G1=11 ((10-2)+3) | G2=5 (10-(2+3)) | G3=11 | G4=11
+2 + 3 + 4
+# => G1=9 | G2=9 | G3=9 | G4=9 (+ es conmutativo: no se distingue)
+2 * 3 * 4
+# => G1=24 | G2=24 | G3=24 | G4=24 (* es conmutativo: no se distingue)
+# --- 2. Precedencia: mezcla de niveles (diapos 29-30) ---
+2 + 3 * 4
+# => G1=14 (2+(3*4)) | G2=14 | G3=20 ((2+3)*4) | G4=20
+10 - 2 * 3
+# => G1=4 (10-(2*3)) | G2=4 | G3=24 ((10-2)*3) | G4=24
+20 / 2 + 3
+# => G1=13 ((20/2)+3) | G2=13 | G3=4 (20/(2+3)) | G4=13
+2 * 3 + 4 * 5
+# => G1=26 | G2=26 | G3=70 ((2*(3+4))*5) | G4=50
+100 / 10 / 2 + 1
+# => G1=6 | G2=21 (100/(10/(2+1))+1) | G3=3.33333 ((100/10)/(2+1)) | G4=6
+2 + 3 * 4 - 5 / 5
+# => G1=13 | G2=13 | G3=-1 | G4=3
+# --- 3. Parentesis: mandan en las 4 (diapo 29) ---
+(2 + 3) * 4
+# => G1=20 | G2=20 | G3=20 | G4=20
+2 * (3 + 4)
+# => G1=14 | G2=14 | G3=14 | G4=14
+10 - (2 + 3) * 2
+# => G1=0 (10-(5*2)) | G2=0 | G3=10 ((10-5)*2) | G4=10
+# --- 4. Numero solo y division real ---
+42
+# => G1=42 | G2=42 | G3=42 | G4=42
+7 / 2
+# => G1=3.5 | G2=3.5 | G3=3.5 | G4=3.5 (division real)
+# --- 5. Errores: semantico y sintacticos ---
+5 / 0
+# => ACEPTADA en las 4 + ERROR semantico: division por cero (no cuenta en el resumen)
+2 + * 3
+# => RECHAZADA en las 4 (sintaxis invalida)
+(2 + 3
+# => RECHAZADA en las 4 (parentesis sin cerrar)

@@ -1,0 +1,22 @@
+# casos_g3.txt — G3 PrecInv: izquierda + precedencia INVERTIDA (+- > */)
+# Niveles cruzados a proposito: + y - atan mas fuerte que * y /.
+# Prueba 2 del pedido: precedencia correcta VS invertida.
+# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# Uso:  python3 main.py casos_g3.txt
+# => esperados G1 | G2 | G3 | G4
+2 + 3 * 4
+# => G1=14 (2+(3*4)) | G2=14 | G3=20 ((2+3)*4) | G4=20
+10 - 2 * 3
+# => G1=4 (10-(2*3)) | G2=4 | G3=24 ((10-2)*3) | G4=24
+8 - 4 / 2
+# => G1=6 (8-(4/2)) | G2=6 | G3=2 ((8-4)/2) | G4=2
+2 * 3 - 4
+# => G1=2 ((2*3)-4) | G2=2 | G3=-2 (2*(3-4)) | G4=2
+20 / 2 + 3
+# => G1=13 ((20/2)+3) | G2=13 | G3=4 (20/(2+3)) | G4=13
+2 * 3 + 4 * 5
+# => G1=26 ((2*3)+(4*5)) | G2=26 | G3=70 ((2*(3+4))*5) | G4=50
+4 - 3 - 2
+# => G1=-1 | G2=3 | G3=-1 (igual que G1: la asociatividad se conserva) | G4=-1
+2 + * 3
+# => RECHAZADA en las 4 (sintaxis invalida)

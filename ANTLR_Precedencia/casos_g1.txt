@@ -1,0 +1,21 @@
+# casos_g1.txt — G1 PrecLeft: izquierda + precedencia CORRECTA (*/ > +-)
+# Gramática de referencia (la buena, diapos 27 y 30).
+# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# Uso:  python3 main.py casos_g1.txt
+# => esperados G1 | G2 | G3 | G4
+4 - 3 - 2
+# => G1=-1 ((4-3)-2) | G2=3 (4-(3-2)) | G3=-1 | G4=-1
+8 / 4 / 2
+# => G1=1 ((8/4)/2) | G2=4 (8/(4/2)) | G3=1 | G4=1
+2 + 3 * 4
+# => G1=14 (2+(3*4)) | G2=14 | G3=20 ((2+3)*4) | G4=20
+10 - 2 * 3
+# => G1=4 (10-(2*3)) | G2=4 | G3=24 ((10-2)*3) | G4=24
+2 + 3 * 4 - 5 / 5
+# => G1=13 | G2=13 | G3=-1 | G4=3
+(2 + 3) * 4
+# => G1=20 | G2=20 | G3=20 | G4=20 (el parentesis manda en las 4)
+2 * (3 + 4)
+# => G1=14 | G2=14 | G3=14 | G4=14 (el parentesis manda en las 4)
+2 + * 3
+# => RECHAZADA en las 4 (sintaxis invalida)

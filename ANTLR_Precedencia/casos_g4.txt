@@ -1,0 +1,22 @@
+# casos_g4.txt — G4 PrecFlat: SIN niveles (expr: atom (op atom)*)
+# Todos los operadores al mismo nivel: se pliega de izquierda a derecha,
+# sin precedencia real. El parentesis sigue mandando.
+# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# Uso:  python3 main.py casos_g4.txt
+# => esperados G1 | G2 | G3 | G4
+2 + 3 * 4
+# => G1=14 | G2=14 | G3=20 | G4=20 (((2+3)*4) de izq. a der.)
+10 - 2 * 3
+# => G1=4 | G2=4 | G3=24 | G4=24 (((10-2)*3) de izq. a der.)
+2 * 3 + 4 * 5
+# => G1=26 | G2=26 | G3=70 | G4=50 ((((2*3)+4)*5) de izq. a der.)
+2 + 3 * 4 - 5 / 5
+# => G1=13 | G2=13 | G3=-1 | G4=3 (pliegue plano de izq. a der.)
+7 / 2 + 1
+# => G1=4.5 | G2=4.5 | G3=2.33333 (7/(2+1)) | G4=4.5 (((7/2)+1))
+(2 + 3) * 4
+# => G1=20 | G2=20 | G3=20 | G4=20 (el parentesis manda en las 4)
+42
+# => G1=42 | G2=42 | G3=42 | G4=42 (un solo operando: mismo arbol)
+2 + * 3
+# => RECHAZADA en las 4 (sintaxis invalida)
