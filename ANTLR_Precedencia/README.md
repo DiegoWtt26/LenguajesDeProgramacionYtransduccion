@@ -29,45 +29,59 @@ evaluación. Después imprime la comparativa:
 - **Precedencia G1 vs G3 vs G4** (diapos 29–30): con `2 + 3 * 4`, G1 da
   `2+(3*4) = 14`, mientras G3 da `(2+3)*4 = 20` (nivel invertido) y G4 da
   `20` (sin niveles, de izquierda a derecha).
+- El caso estrella `2 * 3 + 4 * 5` distingue las tres: G1 = 26,
+  G3 = 70, G4 = 50.
 - Los paréntesis mandan en las 4: `(2+3)*4 = 20`, `2*(3+4) = 14`.
 
-Tabla esperada con `casos.txt` (generalizado, 19 casos en 5 bloques):
+## Archivos de casos: 1 general + 4 dedicados
+
+`casos.txt` es el ÚNICO comparativo (mezcla a propósito, 13 casos en 4 bloques).
+Cada `casos_gN.txt` es dedicado: solo documenta el valor de SU gramática,
+con la lógica del fenómeno que esa gramática demuestra (guiado por el PDF).
+`main.py` siempre corre las 4 para comparar, pero el comentario `# =>`
+de cada archivo dedicado solo indica lo esperado en esa gramática.
+
+| archivo | fenómeno que demuestra (PDF) | casos |
+|---------|------------------------------|-------|
+| `casos_g1.txt` | G1 referencia: izquierda + correcta (diapos 27, 29, 30) | 10 (9 con valor + 1 rechazado) |
+| `casos_g2.txt` | G2: la derecha agrupa al revés (diapo 28) | 8 (7 con valor + 1 rechazado) |
+| `casos_g3.txt` | G3: niveles invertidos (diapos 29-30) | 8 (7 con valor + 1 rechazado) |
+| `casos_g4.txt` | G4: sin niveles, pliegue plano (diapo 30 por ausencia) | 8 (7 con valor + 1 rechazado) |
+
+Tabla esperada con `casos.txt` (general, 13 casos en 4 bloques):
 
 | caso | G1 izq-ok | G2 der-ok | G3 invertida | G4 plana |
 |------|-----------|-----------|--------------|----------|
 | `4 - 3 - 2` | -1 | 3 | -1 | -1 |
 | `8 / 4 / 2` | 1 | 4 | 1 | 1 |
-| `10 - 2 + 3` | 11 | 5 | 11 | 11 |
-| `2 + 3 + 4` | 9 | 9 | 9 | 9 |
-| `2 * 3 * 4` | 24 | 24 | 24 | 24 |
 | `2 + 3 * 4` | 14 | 14 | 20 | 20 |
 | `10 - 2 * 3` | 4 | 4 | 24 | 24 |
-| `20 / 2 + 3` | 13 | 13 | 4 | 13 |
 | `2 * 3 + 4 * 5` | 26 | 26 | 70 | 50 |
-| `100 / 10 / 2 + 1` | 6 | 21 | 3.33333 | 6 |
 | `2 + 3 * 4 - 5 / 5` | 13 | 13 | -1 | 3 |
 | `(2 + 3) * 4` | 20 | 20 | 20 | 20 |
 | `2 * (3 + 4)` | 14 | 14 | 14 | 14 |
-| `10 - (2 + 3) * 2` | 0 | 0 | 10 | 10 |
 | `42` | 42 | 42 | 42 | 42 |
 | `7 / 2` | 3.5 | 3.5 | 3.5 | 3.5 |
 | `5 / 0` | ERROR semántico | ERROR semántico | ERROR semántico | ERROR semántico |
 | `2 + * 3` | RECHAZADA | RECHAZADA | RECHAZADA | RECHAZADA |
 | `(2 + 3` | RECHAZADA | RECHAZADA | RECHAZADA | RECHAZADA |
 
-Resumen real: `G1 16/19, G2 16/19, G3 16/19, G4 16/19`
-(16 con valor; `5/0` aceptada con error semántico + 2 rechazadas no cuentan).
+Resumen real: `G1 10/13, G2 10/13, G3 10/13, G4 10/13`
+(10 con valor; `5/0` aceptada con error semántico + 2 rechazadas no cuentan).
+
+Resúmenes dedicados: `casos_g1.txt` 9/10, `casos_g2.txt` 7/8,
+`casos_g3.txt` 7/8, `casos_g4.txt` 7/8.
 
 ## Archivos (organizados en subcarpetas)
 
 ```
-Tarea Análisis de Precedencia y Asociatividad/
+ANTLR_Precedencia/
   README.md        <- este archivo
-  casos.txt        <- combinado: una expresión por línea (# comentario)
-  casos_g1.txt     <- G1 (izquierda + correcta): 8 casos con esperados
-  casos_g2.txt     <- G2 (derecha + correcta): 8 casos con esperados
-  casos_g3.txt     <- G3 (izquierda + invertida): 8 casos con esperados
-  casos_g4.txt     <- G4 (plana): 8 casos con esperados
+  casos.txt        <- GENERAL comparativo (13 casos, el unico que mezcla)
+  casos_g1.txt     <- G1 (izquierda + correcta): 10 casos, solo valor G1
+  casos_g2.txt     <- G2 (derecha + correcta): 8 casos, solo valor G2
+  casos_g3.txt     <- G3 (izquierda + invertida): 8 casos, solo valor G3
+  casos_g4.txt     <- G4 (plana): 8 casos, solo valor G4
   main.py          <- corre los 4 parsers, grafica los 4 AST y compara
   generar.sh       <- regenera los 4 parsers si se modifica un .g4
   gramatica/       <- las 4 gramáticas
@@ -87,7 +101,7 @@ Tarea Análisis de Precedencia y Asociatividad/
 
 ```bash
 python3 --version   # >= 3.10
-pip install antlr4-python3-runtime==4.13.2
+pip3 install antlr4-python3-runtime==4.13.2
 ```
 
 Con entorno virtual (recomendado):
@@ -95,13 +109,13 @@ Con entorno virtual (recomendado):
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install antlr4-python3-runtime==4.13.2
+pip3 install antlr4-python3-runtime==4.13.2
 ```
 
 ## Ejecución (Linux)
 
 ```bash
-cd "Tarea Análisis de Precedencia y Asociatividad"
+cd ANTLR_Precedencia
 python3 main.py casos.txt
 python3 main.py casos_g1.txt
 python3 main.py casos_g2.txt
@@ -111,7 +125,7 @@ python3 main.py "4 - 3 - 2"
 python3 main.py
 ```
 
-Sin argumentos usa `casos.txt`. La carpeta tiene espacios: usa comillas.
+Sin argumentos usa `casos.txt`.
 
 ## Regenerar los parsers
 

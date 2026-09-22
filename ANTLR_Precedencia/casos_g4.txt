@@ -1,22 +1,27 @@
-# casos_g4.txt — G4 PrecFlat: SIN niveles (expr: atom (op atom)*)
-# Todos los operadores al mismo nivel: se pliega de izquierda a derecha,
-# sin precedencia real. El parentesis sigue mandando.
-# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# casos_g4.txt — G4 PrecFlat: SIN niveles (todo a la izquierda, sin precedencia)
+# Un solo nivel que se pliega siempre por la izquierda (diapo 30 por ausencia):
+#   expr : atom (op atom)*     (evaluacion estrictamente de izquierda a derecha)
+#   atom : NUM | '(' expr ')'
 # Uso:  python3 main.py casos_g4.txt
-# => esperados G1 | G2 | G3 | G4
+# Nota: main.py corre las 4 para comparar, pero ESTE archivo solo documenta G4.
+# Lo que hay que ver aqui (diapos 29-30):
+#  - NO hay niveles: 2+3*4 da 20 igual que G3 pero POR OTRA CAUSA (pliegue plano).
+#  - El caso estrella 2*3+4*5 da 50: distinto de G1 (=26) Y de G3 (=70).
+#  - La cadena larga 2+3*4-5/5 da 3 (ni 13 de G1 ni -1 de G3).
+#  - El parentesis SI manda (es lo unico que rompe el pliegue plano).
 2 + 3 * 4
-# => G1=14 | G2=14 | G3=20 | G4=20 (((2+3)*4) de izq. a der.)
+# => 20  (((2+3)*4) pliegue de izquierda a derecha, sin niveles)
 10 - 2 * 3
-# => G1=4 | G2=4 | G3=24 | G4=24 (((10-2)*3) de izq. a der.)
+# => 24  (((10-2)*3) pliegue plano)
 2 * 3 + 4 * 5
-# => G1=26 | G2=26 | G3=70 | G4=50 ((((2*3)+4)*5) de izq. a der.)
+# => 50  ((((2*3)+4)*5): CASO ESTRELLA, distinto de G1 y de G3)
 2 + 3 * 4 - 5 / 5
-# => G1=13 | G2=13 | G3=-1 | G4=3 (pliegue plano de izq. a der.)
+# => 3  (pliegue plano completo de izquierda a derecha)
 7 / 2 + 1
-# => G1=4.5 | G2=4.5 | G3=2.33333 (7/(2+1)) | G4=4.5 (((7/2)+1))
+# => 4.5  (((7/2)+1) pliegue plano con division real)
 (2 + 3) * 4
-# => G1=20 | G2=20 | G3=20 | G4=20 (el parentesis manda en las 4)
+# => 20  (el parentesis manda, como en todas)
 42
-# => G1=42 | G2=42 | G3=42 | G4=42 (un solo operando: mismo arbol)
+# => 42  (un solo operando: no hay pliegue que mostrar)
 2 + * 3
-# => RECHAZADA en las 4 (sintaxis invalida)
+# => RECHAZADA (sintaxis invalida: falta operando)

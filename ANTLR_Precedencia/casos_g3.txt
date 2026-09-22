@@ -1,22 +1,27 @@
-# casos_g3.txt — G3 PrecInv: izquierda + precedencia INVERTIDA (+- > */)
-# Niveles cruzados a proposito: + y - atan mas fuerte que * y /.
-# Prueba 2 del pedido: precedencia correcta VS invertida.
-# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# casos_g3.txt — G3 PrecInv: IZQUIERDA + precedencia INVERTIDA (+- > */)
+# Niveles cruzados A PROPOSITO (diapo 30: la precedencia vive en los niveles):
+#   e : e ('*'|'/') t | t      (*/ en el nivel BAJO = ata menos)
+#   t : t ('+'|'-') f | f      (+- en el nivel ALTO = ata mas)
+#   f : NUM | '(' e ')'
 # Uso:  python3 main.py casos_g3.txt
-# => esperados G1 | G2 | G3 | G4
+# Nota: main.py corre las 4 para comparar, pero ESTE archivo solo documenta G3.
+# Lo que hay que ver aqui (diapos 29-30):
+#  - Cada mezcla +- con */ da AL REVES que G1: el +- agrupa primero.
+#  - La asociatividad se CONSERVA a la izquierda (4-3-2 da igual que G1).
+#  - El parentesis sigue mandando (igual que en todas).
 2 + 3 * 4
-# => G1=14 (2+(3*4)) | G2=14 | G3=20 ((2+3)*4) | G4=20
+# => 20  ((2+3)*4: el + ata primero, diapo 29 al reves)
 10 - 2 * 3
-# => G1=4 (10-(2*3)) | G2=4 | G3=24 ((10-2)*3) | G4=24
+# => 24  ((10-2)*3)
 8 - 4 / 2
-# => G1=6 (8-(4/2)) | G2=6 | G3=2 ((8-4)/2) | G4=2
-2 * 3 - 4
-# => G1=2 ((2*3)-4) | G2=2 | G3=-2 (2*(3-4)) | G4=2
+# => 2  ((8-4)/2)
 20 / 2 + 3
-# => G1=13 ((20/2)+3) | G2=13 | G3=4 (20/(2+3)) | G4=13
+# => 4  (20/(2+3): el + de abajo agrupa primero)
 2 * 3 + 4 * 5
-# => G1=26 ((2*3)+(4*5)) | G2=26 | G3=70 ((2*(3+4))*5) | G4=50
+# => 70  ((2*(3+4))*5: el + central parte la expresion)
 4 - 3 - 2
-# => G1=-1 | G2=3 | G3=-1 (igual que G1: la asociatividad se conserva) | G4=-1
+# => -1  ((4-3)-2: solo +-, la izquierda se conserva)
+(2 + 3) * 4
+# => 20  (el parentesis manda, como en todas)
 2 + * 3
-# => RECHAZADA en las 4 (sintaxis invalida)
+# => RECHAZADA (sintaxis invalida: falta operando)

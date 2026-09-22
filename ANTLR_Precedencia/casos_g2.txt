@@ -1,22 +1,28 @@
-# casos_g2.txt — G2 PrecRight: derecha + precedencia CORRECTA (*/ > +-)
-# Misma precedencia que G1 pero recursion E -> T op E (diapo 28):
-# los operadores iguales agrupan hacia la DERECHA.
-# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# casos_g2.txt — G2 PrecRight: DERECHA + precedencia CORRECTA (*/ > +-)
+# Misma precedencia que G1, pero recursion al reves (diapo 28: E -> T op E):
+#   e : t ('+'|'-') e | t      (asociatividad derecha)
+#   t : f ('*'|'/') t | f      (asociatividad derecha)
+#   f : NUM | '(' e ')'
 # Uso:  python3 main.py casos_g2.txt
-# => esperados G1 | G2 | G3 | G4
+# Nota: main.py corre las 4 para comparar, pero ESTE archivo solo documenta G2.
+# Lo que hay que ver aqui (diapos 27-28):
+#  - Los operadores del MISMO nivel agrupan a la DERECHA.
+#  - Si NO se repite operador del mismo nivel, coincide con G1 (misma precedencia).
+#  - El caso largo 100/10/2+1 muestra la derecha dentro de la cadena de /
+#    (100/(10/2)=20) con el + fuera por precedencia (+1 al final).
 4 - 3 - 2
-# => G1=-1 ((4-3)-2) | G2=3 (4-(3-2)) | G3=-1 | G4=-1
+# => 3  (4-(3-2), derecha, diapo 28)
 8 / 4 / 2
-# => G1=1 ((8/4)/2) | G2=4 (8/(4/2)) | G3=1 | G4=1
+# => 4  (8/(4/2), derecha)
 10 - 2 + 3
-# => G1=11 ((10-2)+3) | G2=5 (10-(2+3)) | G3=11 | G4=11
-2 + 3 * 4
-# => G1=14 | G2=14 (misma precedencia que G1) | G3=20 | G4=20
+# => 5  (10-(2+3): el + de la derecha agrupa primero)
 100 / 10 / 2 + 1
-# => G1=6 (((100/10)/2)+1) | G2=21 ((100/(10/2))+1) | G3=3.33333 | G4=6
+# => 21  (((100/(10/2))+1): la / agrupa a la derecha y el + queda fuera por precedencia)
+2 + 3 * 4
+# => 14  (2+(3*4): sin repetir operador del nivel, igual que G1)
 2 * (3 + 4)
-# => G1=14 | G2=14 | G3=14 | G4=14 (el parentesis manda en las 4)
+# => 14  (el parentesis manda, como en todas)
 7
-# => G1=7 | G2=7 | G3=7 | G4=7 (un solo operando: mismo arbol)
+# => 7  (un solo operando: mismo arbol en cualquier asociatividad)
 2 + * 3
-# => RECHAZADA en las 4 (sintaxis invalida)
+# => RECHAZADA (sintaxis invalida: falta operando)

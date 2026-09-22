@@ -1,21 +1,31 @@
-# casos_g1.txt — G1 PrecLeft: izquierda + precedencia CORRECTA (*/ > +-)
-# Gramática de referencia (la buena, diapos 27 y 30).
-# Cada caso corre en las 4 gramáticas; se indica lo esperado en cada una.
+# casos_g1.txt — G1 PrecLeft: IZQUIERDA + precedencia CORRECTA (*/ > +-)
+# Es la gramatica de REFERENCIA (la buena, diapos 27 y 30):
+#   e : e ('+'|'-') t | t      (asociatividad izquierda, diapo 27: E -> E op T)
+#   t : t ('*'|'/') f | f      (nivel alto para */)
+#   f : NUM | '(' e ')'
 # Uso:  python3 main.py casos_g1.txt
-# => esperados G1 | G2 | G3 | G4
+# Nota: main.py corre las 4 para comparar, pero ESTE archivo solo documenta G1.
+# Lo que hay que ver aqui (diapos 27, 29, 30, 13):
+#  - Los operadores del MISMO nivel agrupan a la IZQUIERDA.
+#  - */ atan mas fuerte que +- (niveles: E abajo, T arriba).
+#  - El AST (diapo 13) deja */ colgado mas abajo que +-.
 4 - 3 - 2
-# => G1=-1 ((4-3)-2) | G2=3 (4-(3-2)) | G3=-1 | G4=-1
+# => -1  ((4-3)-2, izquierda, diapo 27)
 8 / 4 / 2
-# => G1=1 ((8/4)/2) | G2=4 (8/(4/2)) | G3=1 | G4=1
+# => 1  ((8/4)/2, izquierda)
+10 - 2 + 3
+# => 11  ((10-2)+3, + y - mismo nivel, se pliega a la izquierda)
 2 + 3 * 4
-# => G1=14 (2+(3*4)) | G2=14 | G3=20 ((2+3)*4) | G4=20
+# => 14  (2+(3*4), * ata mas fuerte, diapo 29)
 10 - 2 * 3
-# => G1=4 (10-(2*3)) | G2=4 | G3=24 ((10-2)*3) | G4=24
-2 + 3 * 4 - 5 / 5
-# => G1=13 | G2=13 | G3=-1 | G4=3
+# => 4  (10-(2*3))
+2 * 3 + 4 * 5
+# => 26  ((2*3)+(4*5), mezcla doble de niveles)
 (2 + 3) * 4
-# => G1=20 | G2=20 | G3=20 | G4=20 (el parentesis manda en las 4)
+# => 20  (el parentesis manda sobre la precedencia, diapo 29)
 2 * (3 + 4)
-# => G1=14 | G2=14 | G3=14 | G4=14 (el parentesis manda en las 4)
+# => 14  (el parentesis manda)
+42
+# => 42  (un solo operando: no hay agrupacion que mostrar)
 2 + * 3
-# => RECHAZADA en las 4 (sintaxis invalida)
+# => RECHAZADA (sintaxis invalida: falta operando)
