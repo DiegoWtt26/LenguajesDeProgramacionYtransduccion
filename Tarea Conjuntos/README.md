@@ -1,20 +1,20 @@
 # Tarea Conjuntos
 
-Cálculo de PRIMEROS, SIGUIENTES y PREDICCIÓN para las dos gramáticas de la tarea, con tabla LL(1).
+Cálculo de PRIMEROS, SIGUIENTES y PREDICCIÓN para las dos gramáticas, con tabla LL(1).
 
 ## Archivos
 
-- `conjuntos.py` - funciones para sacar anulables, primeros, siguientes, predicción y la tabla.
-- `main.py` - tiene las 2 gramáticas y muestra los resultados en consola.
+- `conjuntos.py` - funciones de anulables, primeros, siguientes, predicción y tabla.
+- `main.py` - definición de las 2 gramáticas y salida en consola.
 
-## Cómo correrlo
+## Ejecución
 
 ```bash
 cd "Tarea Conjuntos"
 python3 main.py
 ```
 
-Con `python3 main.py 1` se corre solo el ejercicio 1 y con `python3 main.py 2` solo el 2.
+`python3 main.py 1` para el ejercicio 1, `python3 main.py 2` para el 2.
 
 ## Ejercicio 1
 
@@ -28,7 +28,7 @@ Con `python3 main.py 1` se corre solo el ejercicio 1 y con `python3 main.py 2` s
 
 ![Prediccion 1](<Programa_Ejecutado/Ejercicio1/Prediccion1.png>)
 
-No es LL(1). Hay choques en S, en A, en M[B, seis] y en M[D, seis. Además tiene recursión por la izquierda en S -> S dos y A -> A tres.
+Resultado: no LL(1). Choques en S, en A, en M[B, seis] y en M[D, seis]. Recursión izquierda en S -> S dos y A -> A tres.
 
 ## Ejercicio 2
 
@@ -42,4 +42,4 @@ No es LL(1). Hay choques en S, en A, en M[B, seis] y en M[D, seis. Además tiene
 
 ![Prediccion 2](<Programa_Ejecutado/Ejercicio2/prediccion2.png>)
 
-Tampoco es LL(1). Hay choques en M[B, tres], M[B, cuatro], M[B, cinco] y en M[D, seis].
+Resultado: no LL(1). Choques en M[B, tres], M[B, cuatro], M[B, cinco] y en M[D, seis].

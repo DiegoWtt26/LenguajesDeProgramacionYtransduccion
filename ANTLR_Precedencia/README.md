@@ -1,54 +1,39 @@
-# Tarea — Análisis de Precedencia y Asociatividad (Linux)
-
-Referencia: PDF de Análisis Sintáctico, diapos 27–31 (asociatividad y
-precedencia), 30 (niveles gramaticales), 36 (gramática estilo ANTLR) y
-38 (actividad 2 de diseño). Todo lo de aquí es para Linux (bash).
+# Precedencia y asociatividad (Linux)
 
 ## Las 4 gramáticas
 
-Mismo lenguaje en las 4 (`+ - * /`, paréntesis, `NUM`; división real):
+Mismo lenguaje en las 4 (`+ - * /`, paréntesis, `NUM`, división real):
 
 | ID | Reglas clave | Asociatividad | Precedencia |
 |----|--------------|---------------|-------------|
 | G1 `PrecLeft.g4` | `e:e op t \| t` , `t:t op f \| f` | izquierda | correcta: `*/ > +-` (diapos 27, 30) |
 | G2 `PrecRight.g4` | `e:t op e \| t` , `t:f op t \| f` | derecha (diapo 28: `E → T op E`) | correcta: `*/ > +-` |
-| G3 `PrecInv.g4` | `e:e */ t \| t` , `t:t +- f \| f` | izquierda | INVERTIDA a propósito: `+- > */` |
-| G4 `PrecFlat.g4` | `expr: atom (op atom)*` | izquierda | SIN niveles: todo se pliega de izquierda a derecha |
+| G3 `PrecInv.g4` | `e:e */ t \| t` , `t:t +- f \| f` | izquierda | invertida: `+- > */` |
+| G4 `PrecFlat.g4` | `expr: atom (op atom)*` | izquierda | sin niveles, pliegue izquierda-derecha |
 
-G1 es la gramática de referencia (la buena). G2 solo cambia la dirección
-de la recursión; G3 intercambia los niveles; G4 elimina los niveles.
+G1 como referencia. G2 con cambio de dirección, G3 con niveles cruzados, G4 sin niveles.
 
-## Qué comprueba `main.py`
+## Salida de `main.py`
 
-Por cada línea del `.txt`, corre las 4 gramáticas e imprime por cada una:
-`Estado` (ACEPTADA / RECHAZADA), AST en ASCII (diapo 13), AST en tupla y
-evaluación. Después imprime la comparativa:
+Ejecución de las 4 gramáticas por línea del txt. Por cada una: `Estado` (ACEPTADA / RECHAZADA), AST en ASCII, AST en tupla y evaluación. Comparativa final:
 
-- **Asociatividad G1 vs G2** (diapo 27): con `4 - 3 - 2`, G1 da
-  `(4-3)-2 = -1` y G2 da `4-(3-2) = 3`. Distinto árbol, distinto valor.
-- **Precedencia G1 vs G3 vs G4** (diapos 29–30): con `2 + 3 * 4`, G1 da
-  `2+(3*4) = 14`, mientras G3 da `(2+3)*4 = 20` (nivel invertido) y G4 da
-  `20` (sin niveles, de izquierda a derecha).
-- El caso estrella `2 * 3 + 4 * 5` distingue las tres: G1 = 26,
-  G3 = 70, G4 = 50.
-- Los paréntesis mandan en las 4: `(2+3)*4 = 20`, `2*(3+4) = 14`.
+- **Asociatividad G1 vs G2** (diapo 27): `4 - 3 - 2`, G1 `(4-3)-2 = -1`, G2 `4-(3-2) = 3`. Distinto árbol, distinto valor.
+- **Precedencia G1 vs G3 vs G4** (diapos 29–30): `2 + 3 * 4`, G1 `2+(3*4) = 14`, G3 `(2+3)*4 = 20`, G4 `20` (orden de lectura).
+- Caso `2 * 3 + 4 * 5`: G1 = 26, G3 = 70, G4 = 50.
+- Paréntesis en las 4: `(2+3)*4 = 20`, `2*(3+4) = 14`.
 
 ## Archivos de casos: 1 general + 4 dedicados
 
-`casos.txt` es el ÚNICO comparativo (mezcla a propósito, 13 casos en 4 bloques).
-Cada `casos_gN.txt` es dedicado: solo documenta el valor de SU gramática,
-con la lógica del fenómeno que esa gramática demuestra (guiado por el PDF).
-`main.py` siempre corre las 4 para comparar, pero el comentario `# =>`
-de cada archivo dedicado solo indica lo esperado en esa gramática.
+`casos.txt` como único comparativo (13 casos, 4 bloques). Cada `casos_gN.txt` como dedicado, con valor solo de su gramática. `main.py` con ejecución de las 4 en todos los casos; el `# =>` de cada dedicado indica solo lo esperado en esa.
 
-| archivo | fenómeno que demuestra (PDF) | casos |
+| archivo | fenómeno (PDF) | casos |
 |---------|------------------------------|-------|
 | `casos_g1.txt` | G1 referencia: izquierda + correcta (diapos 27, 29, 30) | 10 (9 con valor + 1 rechazado) |
-| `casos_g2.txt` | G2: la derecha agrupa al revés (diapo 28) | 8 (7 con valor + 1 rechazado) |
+| `casos_g2.txt` | G2: agrupación derecha (diapo 28) | 8 (7 con valor + 1 rechazado) |
 | `casos_g3.txt` | G3: niveles invertidos (diapos 29-30) | 8 (7 con valor + 1 rechazado) |
-| `casos_g4.txt` | G4: sin niveles, pliegue plano (diapo 30 por ausencia) | 8 (7 con valor + 1 rechazado) |
+| `casos_g4.txt` | G4: sin niveles, pliegue plano | 8 (7 con valor + 1 rechazado) |
 
-Tabla esperada con `casos.txt` (general, 13 casos en 4 bloques):
+Tabla con `casos.txt` (general):
 
 | caso | G1 izq-ok | G2 der-ok | G3 invertida | G4 plana |
 |------|-----------|-----------|--------------|----------|
@@ -66,45 +51,35 @@ Tabla esperada con `casos.txt` (general, 13 casos en 4 bloques):
 | `2 + * 3` | RECHAZADA | RECHAZADA | RECHAZADA | RECHAZADA |
 | `(2 + 3` | RECHAZADA | RECHAZADA | RECHAZADA | RECHAZADA |
 
-Resumen real: `G1 10/13, G2 10/13, G3 10/13, G4 10/13`
-(10 con valor; `5/0` aceptada con error semántico + 2 rechazadas no cuentan).
+Resumen general: `G1 10/13, G2 10/13, G3 10/13, G4 10/13` (10 con valor; `5/0` con error semántico + 2 rechazadas). Dedicados: `casos_g1.txt` 9/10, resto 7/8.
 
-Resúmenes dedicados: `casos_g1.txt` 9/10, `casos_g2.txt` 7/8,
-`casos_g3.txt` 7/8, `casos_g4.txt` 7/8.
-
-## Archivos (organizados en subcarpetas)
+## Archivos (subcarpetas)
 
 ```
 ANTLR_Precedencia/
   README.md        <- este archivo
-  casos.txt        <- GENERAL comparativo (13 casos, el unico que mezcla)
-  casos_g1.txt     <- G1 (izquierda + correcta): 10 casos, solo valor G1
-  casos_g2.txt     <- G2 (derecha + correcta): 8 casos, solo valor G2
-  casos_g3.txt     <- G3 (izquierda + invertida): 8 casos, solo valor G3
-  casos_g4.txt     <- G4 (plana): 8 casos, solo valor G4
-  main.py          <- corre los 4 parsers, grafica los 4 AST y compara
-  generar.sh       <- regenera los 4 parsers si se modifica un .g4
+  casos.txt        <- general comparativo
+  casos_g1.txt     <- G1: 10 casos
+  casos_g2.txt     <- G2: 8 casos
+  casos_g3.txt     <- G3: 8 casos
+  casos_g4.txt     <- G4: 8 casos
+  main.py          <- ejecución de los 4 parsers + comparativa
+  generar.sh       <- regeneración
   gramatica/       <- las 4 gramáticas
-    PrecLeft.g4, PrecRight.g4, PrecInv.g4, PrecFlat.g4
-  lab/             <- versión para lab.antlr.org (Start rule: prog; Lexer compartido)
-    PrecLabLexer.g4 + G1_PrecLeftLabParser.g4, G2_PrecRightLabParser.g4,
-    G3_PrecInvLabParser.g4, G4_PrecFlatLabParser.g4
-  generado/        <- código generado con ANTLR 4.13.2 (no editar a mano)
-    Prec*Lexer.py, Prec*Parser.py, Prec*Visitor.py, Prec*Listener.py
-    (+ .interp/.tokens)
+  lab/             <- versión lab.antlr.org (start: prog)
+  generado/        <- código ANTLR 4.13.2 (sin edición manual)
 ```
 
-- `main.py` agrega `generado/` al `sys.path`, así los imports funcionan
-  desde la raíz sin importar la carpeta.
+`main.py` con agregado de `generado/` a `sys.path`. Ejecución desde la raíz.
 
-## Requisitos (Linux)
+## Requisitos
 
 ```bash
 python3 --version   # >= 3.10
 pip3 install antlr4-python3-runtime==4.13.2
 ```
 
-Con entorno virtual (recomendado):
+Con entorno virtual:
 
 ```bash
 python3 -m venv .venv
@@ -112,7 +87,7 @@ source .venv/bin/activate
 pip3 install antlr4-python3-runtime==4.13.2
 ```
 
-## Ejecución (Linux)
+## Ejecución
 
 ```bash
 cd ANTLR_Precedencia
@@ -125,19 +100,19 @@ python3 main.py "4 - 3 - 2"
 python3 main.py
 ```
 
-Sin argumentos usa `casos.txt`.
+Sin argumentos, uso de `casos.txt`.
 
-## Regenerar los parsers
+## Regenerar
 
 ```bash
 chmod +x generar.sh
 ./generar.sh
 ```
 
-Busca el jar en `$ANTLR_JAR` o `/tmp/antlr-4.13.2-complete.jar`. Descarga:
+Búsqueda del jar en `$ANTLR_JAR` o `/tmp/antlr-4.13.2-complete.jar`:
 
 ```bash
 curl -L -o /tmp/antlr-4.13.2-complete.jar https://www.antlr.org/download/antlr-4.13.2-complete.jar
 ```
 
-Se necesita Java 11 o superior (solo para generar, no para ejecutar).
+Java 11 o superior (solo generación, no ejecución).
