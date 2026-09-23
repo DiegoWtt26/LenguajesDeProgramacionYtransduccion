@@ -65,6 +65,12 @@ python3 derivaciones.py "3 + 4 * 5" "a + b * c" "(3 + 4) * 5"
 
 Las dos secuencias terminan en la misma cadena de terminales; lo único que cambia es el orden en que se expanden los no terminales, no el árbol resultante. Esto confirma que la gramática no es ambigua.
 
+## Evidencia del Parse Tree en lab.antlr.org
+
+Captura con la versión lab (`Expr12LabLexer.g4` + `Expr12LabParser.g4`, regla inicial `prog`) y la entrada `3 + 4 * 5`. Se ve el árbol completo con todos los niveles `e/t/f`, tal como lo describe la diapo 12:
+
+![Parse Tree de 3 + 4 * 5 en lab.antlr.org](<Tarea #2.png>)
+
 ## Regeneración del parser
 
 ```bash

@@ -67,3 +67,9 @@ curl -L -o /tmp/antlr-4.13.2-complete.jar https://www.antlr.org/download/antlr-4
 ## Resultado esperado con `casos.txt`
 - ACEPTADA: `2 + 3 * 4 = 14`, `2 + 3 * (4 + 5) = 29`, `a + b * c = 14`, `(2+3)*4 = 20`, `42`
 - RECHAZADA: `2 + 3 - 4`, `2 + 3 * (4 - 5)` (usan el operador `-`, que no existe en esta gramática), `2 + * 3` (sintaxis inválida)
+
+## Evidencia del árbol en lab.antlr.org
+
+Captura con la versión lab (`Expr11LabLexer.g4` + `Expr11LabParser.g4`, regla inicial `prog`) y la entrada `2 + 2 * 4`. El árbol muestra los niveles `e/t/f` y que la multiplicación queda agrupada abajo (mayor precedencia):
+
+![Árbol de 2 + 2 * 4 en lab.antlr.org](<Tarea #1.png>)

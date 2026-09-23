@@ -50,6 +50,18 @@ python3 main.py
 
 Si no se indica ningún argumento, el programa utiliza el archivo `casos.txt`.
 
+## Evidencia de los dos árboles en lab.antlr.org
+
+Capturas con la versión lab (regla inicial `prog`). La misma expresión `2 + 3 * 4` produce dos árboles distintos según el orden de las reglas, lo que deja la ambigüedad a la vista:
+
+Con `ExprAmbLabParser.g4` (el `+` en primer lugar), la entrada se agrupa como `(2+3)*4`:
+
+![Árbol (2+3)*4 en lab.antlr.org](<Tarea #3,1.png>)
+
+Con `ExprAmbInvLabParser.g4` (el `*` en primer lugar), la misma entrada se agrupa como `2+(3*4)`:
+
+![Árbol 2+(3*4) en lab.antlr.org](<Tarea #3.png>)
+
 ## Regeneración del parser
 
 ```bash
