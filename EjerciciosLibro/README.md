@@ -14,7 +14,7 @@ Soluciones a ejercicios del capítulo sobre Flex y Bison: calculadora del libro,
 
 **Pregunta del libro:** *Will the calculator accept a line that contains only a comment? Why not? Would it be easier to fix this in the scanner or in the parser?*
 
-**Resumen:** Sin aceptación. La regla de comentarios (`"//".*`) sin consumo del salto de línea deja un `EOL` sin expresión previa y el parser falla. Corrección simple en el scanner, con consumo del `\n` (o fin de archivo) en la regla de comentario.
+**Resumen:** La calculadora no acepta esa línea. La regla de comentarios (`"//".*`) no consume el salto de línea, por lo que el parser recibe un `EOL` sin una expresión previa y la línea falla. La corrección más simple se hace en el scanner, haciendo que la regla de comentario también consuma el `\n` (o el fin de archivo).
 
 📄 Detalle en [`ejercicio_1.md`](ejercicio_1.md).
 
@@ -24,7 +24,7 @@ Soluciones a ejercicios del capítulo sobre Flex y Bison: calculadora del libro,
 
 **Pregunta del libro:** *Make the calculator into a hex calculator that accepts both hex and decimal numbers... use `strtol`... print the result in both decimal and hex.*
 
-**Resumen:** Regla en `ejercicio_2.l` para hexadecimal (`0x...`) y decimal, ambas con `strtol`. Salida en `ejercicio_2.y` con `printf("= %d (0x%X)\n", ...)`, valor en decimal y hexadecimal.
+**Resumen:** En `ejercicio_2.l` se agrega una regla para números hexadecimales (`0x...`) y otra para decimales, ambas con conversión mediante `strtol`. En `ejercicio_2.y` la salida usa `printf("= %d (0x%X)\n", ...)`, de modo que el valor se presenta en decimal y en hexadecimal.
 
 **Compilación y ejecución:**
 
@@ -37,7 +37,7 @@ gcc ejercicio_2.tab.c lex.yy.c -o eje2 -lfl
 
 ![Ejecución ejercicio 2](capturas/ejercicio_2_ejecucion.png)
 
-Ejemplo: `0x10 + 10` → `= 26 (0x1A)`.
+Por ejemplo, la entrada `0x10 + 10` produce `= 26 (0x1A)`.
 
 📄 Código y explicación en [`ejercicio_2.md`](ejercicio_2.md).
 
@@ -47,7 +47,7 @@ Ejemplo: `0x10 + 10` → `= 26 (0x1A)`.
 
 **Pregunta del libro:** *(extra credit) Add bit operators such as AND and OR to the calculator...*
 
-**Resumen:** Operador `&` (AND) y carácter `|` con doble uso: absoluto unario (`|numero`) y OR binario (`exp | factor`). Resolución en la gramática: token `ABS` unario al inicio de un `term`, binario entre dos `exp`. Sin conflictos en Bison por separación en niveles (`exp`, `factor`, `term`).
+**Resumen:** Se agrega el operador `&` (AND) y se le da doble uso al carácter `|`: valor absoluto unario (`|numero`) y OR binario (`exp | factor`). La ambigüedad se resuelve en la gramática: el token `ABS` es unario solo al inicio de un `term`, y binario cuando aparece entre dos `exp`. Bison no reporta conflictos porque los niveles (`exp`, `factor`, `term`) separan ambos casos.
 
 **Compilación y ejecución:**
 
@@ -60,7 +60,7 @@ gcc ejercicio_3.tab.c lex.yy.c -o eje3 -lfl
 
 ![Ejecución ejercicio 3](capturas/ejercicio_3_ejecucion.png)
 
-Ejemplo: `|8` (absoluto) → `= 8`, `5 | 3` (OR) → `= 7`.
+Por ejemplo, `|8` (valor absoluto) produce `= 8`, y `5 | 3` (OR binario) produce `= 7`.
 
 📄 Código y explicación en [`ejercicio_3.md`](ejercicio_3.md).
 
@@ -70,7 +70,7 @@ Ejemplo: `|8` (absoluto) → `= 8`, `5 | 3` (OR) → `= 7`.
 
 **Pregunta del libro:** *Does the handwritten version of the scanner from Example 1-4 recognize exactly the same tokens as the flex version?*
 
-**Resumen:** Sin equivalencia. La versión manual no maneja `(` y `)`, así que no produce los tokens `OP` y `CP` de la versión Flex. Para igualarlas, se agregan esos casos al `switch` con el mismo tratamiento de espacios, comentarios, `EOF` e inválidos.
+**Resumen:** Las dos versiones no son equivalentes. La versión manual no maneja los paréntesis `(` y `)`, así que no produce los tokens `OP` y `CP` que sí genera la versión Flex. Para igualarlas, se agregan esos casos al `switch` manteniendo el mismo tratamiento de espacios, comentarios, `EOF` y caracteres inválidos.
 
 📄 Detalle en [`ejercicio_4.md`](ejercicio_4.md).
 
@@ -80,7 +80,7 @@ Ejemplo: `|8` (absoluto) → `= 8`, `5 | 3` (OR) → `= 7`.
 
 **Pregunta del libro:** *Can you think of languages for which flex wouldn't be a good tool to write a scanner?*
 
-**Resumen:** Flex fuera de rango con tokens de contexto no regular: indentación (Python, Haskell), comentarios anidados, identificadores con valor de palabra reservada según contexto, dependencia semántica o lenguaje natural.
+**Resumen:** Flex no es una buena herramienta cuando el reconocimiento de un token depende de un contexto que no se puede expresar con expresiones regulares: lenguajes sensibles a la indentación (Python, Haskell), comentarios anidados, identificadores que son palabra reservada según el contexto, lenguajes con dependencia semántica o el lenguaje natural.
 
 📄 Detalle en [`ejercicio_5.md`](ejercicio_5.md).
 
@@ -90,7 +90,7 @@ Ejemplo: `|8` (absoluto) → `= 8`, `5 | 3` (OR) → `= 7`.
 
 **Pregunta del libro:** *Rewrite the word count program in C. Run some large files through both versions. Is the C version noticeably faster? How much harder was it to debug?*
 
-**Resumen:** Conteo (líneas, palabras, caracteres) en C directo, con palabra = `[a-zA-Z]+`. Manejo manual de estado (dentro/fuera de palabra) frente a reglas declarativas en Flex. Mismos conteos en archivos grandes. Diferencia de velocidad reducida, versión C apenas más rápida sin la capa del scanner generado. Depuración más costosa en C.
+**Resumen:** El programa de conteo (líneas, palabras y caracteres) se reescribe directamente en C, sin Flex, definiendo palabra como `[a-zA-Z]+`. En C el estado se maneja de forma manual (dentro o fuera de una palabra), mientras que en Flex las reglas son declarativas y directas. En archivos grandes ambas versiones producen los mismos conteos. La diferencia de velocidad es reducida (la versión en C es apenas más rápida al evitar la capa del scanner generado), pero la depuración resulta más costosa en C.
 
 **Compilación y ejecución:**
 

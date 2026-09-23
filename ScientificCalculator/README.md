@@ -31,7 +31,7 @@ Texto -> Lexer -> Tokens -> Parser -> Árbol -> Visitor -> Resultado
 - **Parser**: tokens a árbol según la gramática.
 - **Visitor**: recorrido del árbol y evaluación.
 
-Gramática = sintaxis (combinaciones válidas). Visitor = semántica (significado de cada combinación).
+La gramática define la sintaxis (las combinaciones válidas) y el Visitor define la semántica (el significado de cada combinación).
 
 ## Entorno
 
@@ -192,7 +192,7 @@ NEWLINE: '\r'? '\n' ;
 WS     : [ \t]+ -> skip ;
 ```
 
-Orden en `expr` = precedencia. ANTLR con recursión izquierda da mayor precedencia a la alternativa inicial. `mulDiv` antes de `addSub`: multiplicación/división antes de suma/resta.
+El orden de las alternativas en `expr` define la precedencia. ANTLR resuelve la recursión izquierda dándole mayor precedencia a las alternativas que aparecen primero. Por eso `mulDiv` está antes que `addSub`: así la multiplicación y la división se evalúan antes que la suma y la resta.
 
 ### Sección 6 — Alcance de la gramática (práctica)
 
@@ -251,7 +251,7 @@ public class ScientificEvalVisitor
 }
 ```
 
-`<Double>` = evaluación a número real. Diferencia con el ejemplo del libro (`Integer`): soporte de decimales, raíces, logaritmos y trigonometría sin conversiones. `memory` = tabla de símbolos, único estado entre líneas. Árbol por línea de uso temporal.
+`<Double>` indica que la evaluación produce un número real. A diferencia del ejemplo del libro (que usa `Integer`), aquí hay soporte de decimales, raíces, logaritmos y trigonometría sin conversiones. El mapa `memory` es la tabla de símbolos y constituye el único estado que persiste entre líneas. El árbol de cada línea es de uso temporal.
 
 ![Paso 9](capturas/paso9.png)
 
@@ -288,7 +288,7 @@ public Double visitAddSub(
 }
 ```
 
-`visit(ctx.expr(0))` = llamada recursiva al subárbol, sin importar el tipo (otro `AddSub`, `MulDiv`, número, variable...). Evaluación de anidación arbitraria (`2 + 3 * (4 - 1)`) sin tamaño prefijado. `ctx.op` desde `op=('+'|'-')`, comparación con constantes (`ADD`, `SUB`).
+La llamada `visit(ctx.expr(0))` es recursiva sobre el subárbol, sin importar su tipo (puede ser otro `AddSub`, un `MulDiv`, un número, una variable, etc.). Esto permite evaluar expresiones con anidación arbitraria, como `2 + 3 * (4 - 1)`, sin un tamaño prefijado. El campo `ctx.op` proviene de la etiqueta `op=('+'|'-')` y se compara con las constantes generadas (`ADD`, `SUB`).
 
 ![Paso 10](capturas/paso10.png)
 
@@ -353,7 +353,7 @@ public class Main {
 }
 ```
 
-`CharStreams.fromStream(System.in)` = caracteres de entrada. `Lexer` = tokens. `CommonTokenStream` = buffer de consumo. `parser.prog()` = regla raíz y árbol. `visitor.visit(tree)` = recorrido y disparo de métodos `visit...`.
+Cada línea corresponde a una etapa: `CharStreams.fromStream(System.in)` lee los caracteres de la entrada estándar, el `Lexer` los convierte en tokens, el `CommonTokenStream` sirve como buffer de consumo, `parser.prog()` aplica la regla raíz y devuelve el árbol, y `visitor.visit(tree)` recorre el árbol y dispara los métodos `visit...` necesarios.
 
 ![Paso 12](capturas/paso12.png)
 
@@ -392,7 +392,7 @@ java Main
 | `2+3*4` | `14.0` |
 | `(2+3)*4` | `20.0` |
 
-`2+3*4 = 14.0` como validación de precedencia.
+El caso `2+3*4 = 14.0` valida que la precedencia quedó bien definida.
 
 ![Paso 14](capturas/paso14.png)
 
@@ -424,7 +424,7 @@ public Double visitId(
 }
 ```
 
-`visitAssign`: evaluación derecha de `=` + guardado en `memory`. `visitId`: búsqueda en `memory` por nombre.
+El método `visitAssign` evalúa el lado derecho del `=` y guarda el resultado en `memory`. El método `visitId` busca el nombre en `memory` y devuelve su valor.
 
 ![Paso 15](capturas/paso15.png)
 
@@ -460,7 +460,7 @@ expr
     ;
 ```
 
-Posición inicial = mayor precedencia (`2*3^2` como `2*9=18`). `<assoc=right>` = asociatividad derecha. `2^3^2` como `2^(3^2) = 512`, convención matemática.
+La regla ocupa la primera posición para tener la mayor precedencia (`2*3^2` se interpreta como `2*9=18`). La marca `<assoc=right>` indica asociatividad a la derecha: `2^3^2` se interpreta como `2^(3^2) = 512`, según la convención matemática.
 
 Implementación:
 
@@ -539,7 +539,7 @@ public Double visitFunctionCall(
 }
 ```
 
-`log` = base 10 (`Math.log10`), `ln` = base *e* (`Math.log`). Funciones separadas.
+La función `log` calcula el logaritmo en base 10 (`Math.log10`) y `ln` el logaritmo natural en base *e* (`Math.log`). Son funciones separadas.
 
 ![Paso 19](capturas/paso19.png)
 ![Paso 20](capturas/paso20.png)
@@ -687,7 +687,7 @@ Listado de variables actuales.
 
 ### Sección 27-30 — Diseño de graficación (análisis)
 
-Evaluación simple = una vez por expresión (`sin(pi/2)` → un número). Gráfica `y = sin(x)` = misma expresión con muchos valores de `x`:
+Hasta este punto, cada expresión se evalúa una sola vez (por ejemplo, `sin(pi/2)` produce un único número). Graficar una función como `y = sin(x)` exige evaluar la misma expresión con muchos valores distintos de `x`:
 
 | x | sin(x) |
 |---|---|
@@ -705,7 +705,7 @@ Sintaxis: `plot(expresion, xmin, xmax)`, ejemplo `plot(sin(x), -6.28, 6.28`:
 | 'plot' '(' expr ',' expr ',' expr ')' NEWLINE  # plotExpr
 ```
 
-`ctx.expr(0)` = función, `ctx.expr(1)` = `xmin`, `ctx.expr(2)` = `xmax`.
+En esta regla, `ctx.expr(0)` corresponde a la función a graficar, `ctx.expr(1)` al valor `xmin` y `ctx.expr(2)` al valor `xmax`.
 
 ![Paso 28](capturas/paso28.png)
 
@@ -746,7 +746,7 @@ public Double visitPlotExpr(
 
 ### Sección 32 — Discontinuidades (análisis)
 
-`plot(1/x, -5, 5)` con `Infinity`, `-Infinity`, `NaN` en `x = 0`. División `double` entre cero sin excepción, con valores especiales. Filtro con `Double.isFinite(y)` en el bucle. Punto no finito fuera de `xs`/`ys`. Corte de curva en asíntota vertical, sin línea infinita.
+Al graficar `plot(1/x, -5, 5)`, el punto `x = 0` produce los valores especiales `Infinity`, `-Infinity` o `NaN`. La división de un `double` entre cero no lanza excepción, sino que genera esos valores. El bucle los filtra con `Double.isFinite(y)`: los puntos no finitos quedan fuera de `xs`/`ys`, de modo que la curva se interrumpe en la asíntota vertical en lugar de dibujar una línea infinita.
 
 ### Sección 33 — Ventana gráfica (práctica)
 
@@ -839,7 +839,7 @@ Expresión `sin(x) + 2*x^2`:
 - `x`: dos nodos `id` distintos, misma variable.
 - `2`: nodo `number`.
 
-`visit(ctx.expr())` = recorrido de árbol, no evaluación de texto. Texto convertido a objetos (`AddSubContext`, `FunctionCallContext`...) antes del Visitor. Sin relectura del string original.
+Cuando se ejecuta `visit(ctx.expr())` se recorre una estructura de árbol, no se evalúa una cadena de texto. El texto original ya fue convertido a objetos (`AddSubContext`, `FunctionCallContext`, etc.) por el lexer y el parser antes de que el Visitor intervenga, y el string original no se vuelve a leer.
 
 ### Sección 40 — Prueba integral (práctica)
 
@@ -866,7 +866,7 @@ Ejecución correcta. Integración de variables, anidación, trigonometría, `var
 3. **¿Etiquetas `#addSub`, `#functionCall`?** Nodo Java distinto por alternativa, método `visit` propio. Sin distinción manual de tipos.
 4. **¿Ventaja Visitor?** Separación sintaxis (gramática) / semántica (visitor). Extensión de significado sin cambio de gramática, y viceversa.
 5. **¿Tabla de símbolos?** Mapa `memory`, nombre → valor. Estado persistente entre líneas.
-6. **¿Cambio de `x` en gráfica?** Curva `y = f(x)` con múltiples puntos. Reasignación en `memory` por cada evaluación.
+6. **¿Por qué la variable `x` cambia durante una gráfica?** Porque trazar la curva `y = f(x)` requiere conocer el valor de `y` en muchos puntos distintos, y por eso `x` se reasigna en `memory` antes de cada evaluación.
 7. **¿Reevaluación del mismo árbol?** Árbol estático, construcción única. Cambio solo en estado externo (`memory`).
 8. **¿Discontinuidad en gráfica?** Valor no finito (`Infinity`, `NaN`) en el punto. Filtro con `Double.isFinite(y)`, omisión del punto.
 9. **¿Funciones con dos argumentos?** Regla con lista separada por comas. Implementación en reto 2.
@@ -900,7 +900,7 @@ Gramática inicial mínima (suma/resta) con crecimiento hasta lenguaje matemáti
 Gramática -> Lexer -> Parser -> Árbol -> Visitor
 ```
 
-Gramática = sintaxis (escritura válida). Visitor = semántica (significado). Extensión por piezas (potencias, funciones, constantes, comandos, graficación, 5 retos) sin reescritura por paso. Misma base de intérpretes, compiladores, traductores, análisis estático y consultas. Calculadora como ejemplo funcional de DSL matemático con ANTLR y Visitor.
+La gramática define la sintaxis (lo que es válido escribir) y el Visitor implementa la semántica (lo que significa lo escrito). Gracias a esta separación, el lenguaje se pudo extender por piezas (potencias, funciones, constantes, comandos, graficación y los 5 retos) sin reescribir lo anterior en cada paso. Esta es la misma base arquitectónica de sistemas más complejos: intérpretes, compiladores, traductores, analizadores estáticos y lenguajes de consulta. La calculadora es un primer ejemplo funcional de un DSL matemático construido con ANTLR y el patrón Visitor.
 
 ---
 
@@ -1067,7 +1067,7 @@ Separador `;` para funciones, `,` para límites. Sin `;` la coma mezcla funcione
 plot(sin(x); cos(x), -6.28, 6.28)
 ```
 
-Etiquetas de lista (`funcs+=expr`) + etiquetas simples (`xmin=`, `xmax=`, `ymin=`, `ymax=`):
+Se usan etiquetas de lista de ANTLR (`funcs+=expr`) para acumular las funciones, y etiquetas simples (`xmin=`, `xmax=`, `ymin=`, `ymax=`) para los límites:
 
 ```antlr
 | 'plot' '(' funcs+=expr (';' funcs+=expr)* ',' xmin=expr ',' xmax=expr (',' ymin=expr ',' ymax=expr)? ')' NEWLINE   # plotExpr

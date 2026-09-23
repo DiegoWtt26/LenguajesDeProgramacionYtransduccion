@@ -8,12 +8,12 @@
 
 ## Descripción
 
-Lenguaje simple en ANTLR 4 para instrucciones del tipo:
-`mostrar ventas`, `cargar clientes`, `graficar ingresos`.
+Lenguaje simple construido con ANTLR 4, capaz de reconocer instrucciones del tipo:
+`mostrar ventas`, `cargar clientes` y `graficar ingresos`.
 
 ## Gramática
 
-Contenido de `Instruccion.g4`:
+La gramática completa se encuentra en el archivo `Instruccion.g4`:
 
 ```antlr
 grammar Instruccion;
@@ -49,87 +49,91 @@ WS
     ;
 ```
 
-## Reglas léxicas
+## Explicación de las reglas léxicas
 
-- **MOSTRAR, CARGAR, GRAFICAR**: palabras clave `mostrar`, `cargar`, `graficar`. Mayúscula inicial por convención ANTLR para tokens.
-- **ID**: uno o más caracteres alfabéticos (`[a-zA-Z]+`). Nombres de cada instrucción (ventas, clientes, ingresos...).
-- **WS**: espacios, tabulaciones y saltos de línea, con `-> skip` para descarte en el lexer.
+- **MOSTRAR, CARGAR, GRAFICAR**: reconocen literalmente las palabras clave `mostrar`, `cargar` y `graficar`. Los nombres empiezan con mayúscula porque ANTLR exige que toda regla léxica (token) inicie con letra mayúscula.
+- **ID**: reconoce uno o más caracteres alfabéticos (`[a-zA-Z]+`) y se usa para los nombres que acompañan a cada instrucción (ventas, clientes, ingresos, etc.).
+- **WS**: reconoce espacios, tabulaciones y saltos de línea, y usa la acción `-> skip` para indicarle al lexer que los descarte y no los envíe al parser.
 
-## Reglas sintácticas
+## Explicación de las reglas sintácticas
 
-- **programa**: regla inicial. Una o más instrucciones (`instruccion+`) + fin de archivo (`EOF`). Varias instrucciones por archivo de entrada.
-- **instruccion**: palabra clave (`MOSTRAR`, `CARGAR` o `GRAFICAR`) + identificador (`ID`).
+- **programa**: es la regla inicial. Indica que un programa válido está compuesto por una o más instrucciones (`instruccion+`) seguidas del fin de archivo (`EOF`). Esto permite procesar varias instrucciones en un mismo archivo de entrada.
+- **instruccion**: define que cada instrucción válida está formada por una palabra clave (`MOSTRAR`, `CARGAR` o `GRAFICAR`) seguida de un identificador (`ID`).
 
-## Tokens reconocidos
+## Evidencia de tokens reconocidos
 
-Entrada: `pruebas_validas.txt` (5 pruebas)
+Archivo de entrada: `pruebas_validas.txt` (5 pruebas).
+
+Comando ejecutado:
 
 ```
 grun Instruccion programa -tokens pruebas_validas.txt
 ```
 
+Resultado:
+
 ![Tokens reconocidos](tokens.png)
 
-## Árbol sintáctico
+## Evidencia del árbol sintáctico
+
+Comando ejecutado:
 
 ```
 grun Instruccion programa -tree pruebas_validas.txt
 ```
 
+Resultado:
+
 ![Árbol sintáctico en texto](arbol_texto.png)
 
 ![Árbol sintáctico gráfico](arbol_grafico.png)
 
-## Casos de error
+## Casos de error identificados
 
-**Error 1** — orden incorrecto (`error1.txt`: `ventas mostrar`)
+**Error 1** — orden incorrecto de los tokens (`error1.txt`: `ventas mostrar`)
 
 ![Error 1](error1.png)
 
-**Error 2** — instrucción incompleta (`error2.txt`: `graficar`, sin ID)
+**Error 2** — instrucción incompleta, falta el identificador (`error2.txt`: `graficar`)
 
 ![Error 2](error2.png)
 
-**Error 3** — palabra fuera de gramática (`error3.txt`: `eliminar ventas`)
+**Error 3** — palabra clave no definida en la gramática (`error3.txt`: `eliminar ventas`)
 
 ![Error 3](error3.png)
 
-## Lexer y parser
+## Diferencia entre lexer y parser
 
-Lexer: trabajo sobre caracteres. Agrupación del texto en tokens (palabras clave, identificadores) y descarte de espacios.
-
-Parser: trabajo sobre tokens. Verificación del orden según las reglas sintácticas y construcción del árbol.
-
-Uno define "qué es cada parte", el otro "si el orden es válido". Etapas separadas, diseño y depuración por separado. Base de compiladores e intérpretes.
+El lexer y el parser cumplen roles distintos y complementarios dentro del análisis del lenguaje. El lexer trabaja sobre los caracteres: agrupa el texto en unidades con significado (tokens) como palabras clave e identificadores, y descarta lo que no aporta estructura, como los espacios en blanco. El parser, en cambio, trabaja sobre los tokens: verifica que la secuencia generada por el lexer cumpla el orden y la estructura de las reglas sintácticas, y construye el árbol sintáctico correspondiente. En resumen, el lexer responde a la pregunta "¿qué es cada parte del texto?" y el parser responde a "¿estas partes están organizadas correctamente?". Esta separación permite diseñar y depurar cada etapa por separado, y es la base sobre la que se construyen compiladores e intérpretes.
 
 ## Preguntas de análisis
 
-**1. ¿Diferencia entre lexema y token?**
-Lexema: secuencia tal cual en la entrada (`mostrar`). Token: categoría asignada (`MOSTRAR`). Un token como `ID` agrupa varios lexemas (`ventas`, `clientes`...).
+**1. ¿Cuál es la diferencia entre un lexema y un token?**
+Un lexema es la secuencia de caracteres tal como aparece en el texto de entrada (por ejemplo, la palabra `mostrar`). Un token es la categoría que el lexer le asigna a ese lexema (por ejemplo, `MOSTRAR`). Un mismo token puede corresponder a distintos lexemas (el token `ID` agrupa lexemas como `ventas`, `clientes`, etc.).
 
-**2. ¿Responsabilidad del lexer?**
-Conversión de caracteres a tokens. Agrupación y descarte de espacios.
+**2. ¿Cuál es la responsabilidad del lexer?**
+Convierte la secuencia de caracteres del archivo de entrada en una secuencia de tokens: agrupa los caracteres relacionados y descarta los que no son relevantes para el análisis (como los espacios en blanco).
 
-**3. ¿Responsabilidad del parser?**
-Verificación de la secuencia de tokens según la gramática. Construcción del árbol sintáctico.
+**3. ¿Cuál es la responsabilidad del parser?**
+Recibe la secuencia de tokens generada por el lexer y verifica que cumpla la estructura definida por las reglas sintácticas de la gramática. Con esa verificación construye el árbol sintáctico que representa la estructura de la entrada.
 
-**4. ¿Por qué las léxicas en mayúscula?**
-Convención ANTLR para distinguir tokens de reglas sintácticas en el mismo archivo.
+**4. ¿Por qué las reglas léxicas comienzan con mayúscula en ANTLR?**
+Es una convención de ANTLR que permite diferenciar las reglas léxicas (tokens) de las reglas sintácticas dentro del mismo archivo de gramática.
 
-**5. ¿Por qué las sintácticas en minúscula?**
-La otra mitad de la convención: minúscula = regla del parser, combinación de tokens.
+**5. ¿Por qué las reglas sintácticas comienzan con minúscula?**
+Por la misma convención: al iniciar con minúscula, ANTLR las identifica como reglas del parser, que son las que combinan tokens para formar estructuras más complejas.
 
-**6. ¿Función de `->skip`?**
-Descarte en el lexer. Reconocimiento sin generación de token ni envío al parser.
+**6. ¿Cuál es la función de `->skip`?**
+Le indica al lexer que, aunque reconoció un patrón (como los espacios o los saltos de línea), no debe generar un token para él ni enviarlo al parser; simplemente lo descarta.
 
-**7. ¿Qué es EOF?**
-Fin de archivo. Control de consumo total de la entrada, sin texto restante.
+**7. ¿Qué representa EOF?**
+Representa el final del archivo de entrada (End Of File). Se usa en las reglas sintácticas para asegurar que toda la entrada fue consumida y reconocida correctamente, sin que quede texto sin procesar.
 
-**8. ¿Qué representa el árbol sintáctico?**
-Estructura jerárquica según la gramática. Nodos internos = reglas aplicadas, hojas = tokens.
+**8. ¿Qué información representa un árbol sintáctico?**
+Representa la estructura jerárquica de la entrada según las reglas de la gramática: los nodos internos corresponden a las reglas sintácticas aplicadas, y las hojas corresponden a los tokens reconocidos por el lexer.
 
-**9. ¿Listener frente a Visitor?**
-Listener: recorrido automático con eventos (`enterX`/`exitX`), sin control del orden. Visitor: visita explícita por código propio, control total. Útil en evaluación o generación.
+**9. ¿Cuál es la diferencia entre Listener y Visitor?**
+El Listener deja que ANTLR recorra el árbol de forma automática y dispara eventos (`enterX`/`exitX`) en cada nodo, sin que el programador controle el orden del recorrido. El Visitor, en cambio, da control explícito: el programador decide cuándo y cómo visitar cada nodo del árbol, lo cual resulta útil para tareas como evaluar expresiones o generar código.
 
-**10. ¿Uso de ANTLR para un DSL?**
-Definición de gramática con palabras y estructuras del dominio, generación de lexer/parser, e implementación de la lógica con Listener o Visitor.
+**10. ¿Cómo podría utilizarse ANTLR para construir un lenguaje de dominio específico?**
+Se define una gramática propia con las palabras clave, los operadores y las estructuras particulares del dominio (por ejemplo, los comandos de un sistema de ventas), y ANTLR genera el lexer y el parser que reconocen ese lenguaje. Sobre ellos se implementa después la lógica de interpretación o ejecución mediante un Listener o un Visitor.

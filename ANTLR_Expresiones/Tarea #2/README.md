@@ -9,31 +9,31 @@
 Gramática por niveles (`Expr12.g4`):
 `E -> E + T | T`, `T -> T * F | F`, `F -> id | num | (E)`.
 
-Enfoque en la diferencia entre Parse Tree completo y AST reducido.
+El objetivo es mostrar la diferencia entre el Parse Tree completo y el AST reducido.
 
-## Salida de `main.py` por línea
-1. Estado: ACEPTADA / RECHAZADA.
-2. Parse Tree completo, con `E, T, F` (diapo 12).
-3. AST solo con operadores y operandos, en 3 formas:
-   - dibujo ASCII
-   - tupla tipo `('+', '3', ('*', '4', '5'))`
-   - JSON
-   - valor evaluado (identificadores con `| a=2 b=3`)
-4. Comparación Parse vs AST (diapo 14).
-5. Chequeo `+(3,*(4,5)) = 23` frente a `*(+(3,4),5) = 35`.
+## Salida de `main.py` por cada línea
+1. Estado sintáctico: ACEPTADA o RECHAZADA.
+2. Parse Tree completo, con todos los niveles `E, T, F` (diapo 12).
+3. AST con solo los operadores y operandos, presentado en tres formas:
+   - dibujo en ASCII
+   - tupla anidada, por ejemplo `('+', '3', ('*', '4', '5'))`
+   - objeto JSON
+   - además del valor evaluado (los identificadores reciben valor con la sintaxis `| a=2 b=3`)
+4. Comparación punto por punto entre Parse Tree y AST (diapo 14).
+5. Verificación del árbol correcto `+(3,*(4,5)) = 23` frente al árbol incorrecto `*(+(3,4),5) = 35`.
 
 ## Archivos
-- `Expr12.g4`, `casos.txt`, `main.py`, generados (`Expr12*.py`), `generar.sh`
-- `Expr12LabLexer.g4`, `Expr12LabParser.g4` — versión para lab.antlr.org (start rule: `prog`)
+- `Expr12.g4`, `casos.txt`, `main.py`, archivos generados (`Expr12*.py`), `generar.sh`
+- `Expr12LabLexer.g4`, `Expr12LabParser.g4` — versión adaptada para lab.antlr.org (regla inicial: `prog`)
 
 ## Requisitos
 
 ```bash
-python3 --version   # >= 3.10
+python3 --version   # 3.10 o superior
 pip install antlr4-python3-runtime==4.13.2
 ```
 
-Con entorno virtual:
+Con entorno virtual (opción recomendada):
 
 ```bash
 python3 -m venv .venv
@@ -51,11 +51,11 @@ python3 main.py "a + b * c | a=2 b=3 c=4"
 python3 main.py
 ```
 
-Sin argumentos, uso de `casos.txt`. En el txt, `#` comentario y formato `expresion [| var=valor]`.
+Si no se indica ningún argumento, el programa utiliza el archivo `casos.txt`. En ese archivo el símbolo `#` marca un comentario y cada caso sigue el formato `expresion [| var=valor]`.
 
-## Extra: derivaciones izquierda y derecha (`derivaciones.py`)
+## Extra: derivaciones por izquierda y por derecha (`derivaciones.py`)
 
-Complemento de `main.py`. Secuencias de formas sentenciales por izquierda y por derecha con la gramática de la diapo 11. Uso del mismo parser generado.
+Este script complementa a `main.py`. Muestra las secuencias de formas sentenciales por la izquierda y por la derecha usando la gramática de la diapo 11, con el mismo parser ya generado.
 
 ```bash
 cd "Tarea #2"
@@ -63,9 +63,9 @@ python3 derivaciones.py "3 + 4 * 5"
 python3 derivaciones.py "3 + 4 * 5" "a + b * c" "(3 + 4) * 5"
 ```
 
-Ambas secuencias terminan en la misma cadena de terminales. Cambio solo en el orden de expansión, no en el árbol. Gramática no ambigua.
+Las dos secuencias terminan en la misma cadena de terminales; lo único que cambia es el orden en que se expanden los no terminales, no el árbol resultante. Esto confirma que la gramática no es ambigua.
 
-## Regenerar
+## Regeneración del parser
 
 ```bash
 chmod +x generar.sh
