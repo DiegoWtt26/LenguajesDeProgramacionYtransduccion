@@ -1,28 +1,30 @@
-# generado/ — Parsers generados por ANTLR (sin edición)
+# Carpeta generado/
 
-Salida de `./generar.sh` (ANTLR 4.13.2, `-Dlanguage=Python3 -visitor -o generado`) desde `../gramatica/*.g4`. Import en `main.py` con agregado de esta carpeta a `sys.path`. Ejecución desde la raíz.
+Esta carpeta contiene los archivos que ANTLR genera a partir de las gramáticas de `../gramatica/`. Se crean con `./generar.sh` (ANTLR 4.13.2, `-Dlanguage=Python3 -visitor -o generado`). No se modifican directamente: cualquier cambio se hace en el `.g4` y se vuelve a generar.
 
-## Contenido (por cada gramática)
+`main.py` incluye esta carpeta en el `sys.path` para importar los parsers. Por eso el programa se ejecuta desde la raíz de la tarea.
 
-`PrecLeft`, `PrecRight`, `PrecInv`, `PrecFlat`, cada una con:
+## Contenido por gramática
+
+Por cada una (`PrecLeft`, `PrecRight`, `PrecInv`, `PrecFlat`):
 
 - `*Lexer.py`, `*Parser.py`, `*Visitor.py`, `*Listener.py`
-- `*.interp`, `*.tokens` y `*Lexer.interp`, `*Lexer.tokens`
+- `*.interp`, `*.tokens` y `*Lexer.interp`, `*Lexer.tokens` (archivos intermedios de ANTLR)
 
-`__pycache__/` como caché de Python, borrado sin efecto.
+`__pycache__/` es la caché de Python y se puede borrar sin problema.
 
 ## Regenerar
 
-Solo con cambios en `../gramatica/`, desde la raíz:
+Solo hace falta si cambia algo en `../gramatica/`. Desde la raíz de la tarea:
 
 ```bash
 ./generar.sh
 ```
 
-Requisito: Java 21 + jar ANTLR 4.13.2 (`$ANTLR_JAR` o `/tmp/antlr-4.13.2-complete.jar`). Comprobación:
+Requiere Java 21 y el jar de ANTLR 4.13.2 (`$ANTLR_JAR` o `/tmp/antlr-4.13.2-complete.jar`). Después, comprobación con:
 
 ```bash
 python3 main.py casos.txt
 ```
 
-Resultado: G1–G4 `8/9` ACEPTADAS (`2 + * 3` RECHAZADA en las 4).
+Resultado esperado: G1–G4 con `8/9` ACEPTADAS (`2 + * 3` RECHAZADA en las 4).

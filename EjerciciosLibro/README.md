@@ -70,7 +70,7 @@ Ejemplo: `|8` (absoluto) → `= 8`, `5 | 3` (OR) → `= 7`.
 
 **Pregunta del libro:** *Does the handwritten version of the scanner from Example 1-4 recognize exactly the same tokens as the flex version?*
 
-**Resumen:** Sin equivalencia. Versión manual sin manejo de `(` y `)`, sin tokens `OP` y `CP` de la versión Flex. Igualación con agregado de esos casos al `switch` y mismo tratamiento de espacios, comentarios, `EOF` e inválidos.
+**Resumen:** Sin equivalencia. La versión manual no maneja `(` y `)`, así que no produce los tokens `OP` y `CP` de la versión Flex. Para igualarlas, se agregan esos casos al `switch` con el mismo tratamiento de espacios, comentarios, `EOF` e inválidos.
 
 📄 Detalle en [`ejercicio_4.md`](ejercicio_4.md).
 

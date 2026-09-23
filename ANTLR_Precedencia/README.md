@@ -73,10 +73,10 @@ ANTLR_Precedencia/
   generar.sh       <- regeneración
   gramatica/       <- las 4 gramáticas
   lab/             <- versión lab.antlr.org (start: prog)
-  generado/        <- código ANTLR 4.13.2 (sin edición manual)
+  generado/        <- código generado por ANTLR 4.13.2 (se crea con generar.sh, no se edita a mano)
 ```
 
-`main.py` con agregado de `generado/` a `sys.path`. Ejecución desde la raíz.
+`main.py` incluye `generado/` en el `sys.path` para importar los parsers. El programa se ejecuta desde la raíz.
 
 ## Requisitos
 

@@ -1,25 +1,25 @@
-# lab/ — Versión para lab.antlr.org (lexer + parser separados)
+# Carpeta lab/ — Versión para lab.antlr.org
 
-`lab.antlr.org` con gramática en dos pestañas. Cada combinada de `../gramatica/` en dos archivos: lexer + parser con `tokenVocab`.
+En `lab.antlr.org` la gramática se pega en dos pestañas separadas (lexer y parser). Por eso cada gramática combinada de `../gramatica/` aquí está dividida en dos archivos: un lexer y un parser que lo usa mediante `tokenVocab`.
 
 ## Archivos
 
-| Archivo | Contenido | Base |
+| Archivo | Contenido | Gramática base |
 |---|---|---|
-| `PrecLabLexer.g4` | Lexer compartido (`NUM`, `MAS`, `MENOS`, `POR`, `DIV`, `LP`, `RP`, `WS -> skip`). Sin literales. | Todas |
-| `G1_PrecLeftLabParser.g4` | G1: izquierda + correcta (`*/ > +-`) | `../gramatica/PrecLeft.g4` |
-| `G2_PrecRightLabParser.g4` | G2: derecha + correcta (`*/ > +-`) | `../gramatica/PrecRight.g4` |
-| `G3_PrecInvLabParser.g4` | G3: izquierda + invertida (`+- > */`) | `../gramatica/PrecInv.g4` |
+| `PrecLabLexer.g4` | Lexer compartido por las 4 (`NUM`, `MAS`, `MENOS`, `POR`, `DIV`, `LP`, `RP`, `WS -> skip`). No usa literales como `'+'`. | Todas |
+| `G1_PrecLeftLabParser.g4` | G1: asociatividad a izquierda, precedencia correcta (`*/ > +-`) | `../gramatica/PrecLeft.g4` |
+| `G2_PrecRightLabParser.g4` | G2: asociatividad a derecha, precedencia correcta (`*/ > +-`) | `../gramatica/PrecRight.g4` |
+| `G3_PrecInvLabParser.g4` | G3: asociatividad a izquierda, precedencia invertida (`+- > */`) | `../gramatica/PrecInv.g4` |
 | `G4_PrecFlatLabParser.g4` | G4: plana, sin niveles | `../gramatica/PrecFlat.g4` |
 
-Cada parser con `options { tokenVocab=PrecLabLexer; }` y tokens (`MAS`, `MENOS`, `POR`, `DIV`, `LP`, `RP`) en lugar de `'+'`, `'-'`, etc.
+Cada parser declara `options { tokenVocab=PrecLabLexer; }` y usa los nombres de tokens (`MAS`, `MENOS`, `POR`, `DIV`, `LP`, `RP`) en lugar de los símbolos `'+'`, `'-'`, etc.
 
 ## Uso en lab.antlr.org
 
-1. Pestaña Lexer: contenido de `PrecLabLexer.g4`.
-2. Pestaña Parser: uno de los cuatro (`G1_`, `G2_`, `G3_` o `G4_`).
-3. Start rule: `prog`.
-4. Input: `4 - 3 - 2` (asociatividad) o `2 + 3 * 4` (precedencia).
-5. Comparación de árboles entre parsers: mismo input, distinta agrupación según gramática.
+1. Pestaña Lexer: pegar el contenido de `PrecLabLexer.g4`.
+2. Pestaña Parser: pegar solo uno de los cuatro (`G1_`, `G2_`, `G3_` o `G4_`).
+3. Regla inicial (start rule): `prog`.
+4. Entrada de prueba: `4 - 3 - 2` (asociatividad) o `2 + 3 * 4` (precedencia).
+5. Comparación de los árboles entre parsers: el mismo texto produce distinta agrupación según la gramática.
 
-Archivos solo para la herramienta web. Ejecución `.py` con parsers de `../generado/`.
+Estos archivos son solo para la herramienta web. El programa en Python usa los parsers de `../generado/`.

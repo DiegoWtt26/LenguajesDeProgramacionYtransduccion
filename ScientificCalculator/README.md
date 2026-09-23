@@ -55,7 +55,7 @@ ScientificCalculator/
 └── ejemplos.txt
 ```
 
-Archivos generados desde `ScientificCalc.g4` (`ScientificCalcLexer.java`, `ScientificCalcParser.java`, `ScientificCalcVisitor.java`, `ScientificCalcBaseVisitor.java`, `*.tokens`/`*.interp`) fuera del repositorio. Solo fuente en versionado. Lista en `.gitignore`.
+Archivos generados desde `ScientificCalc.g4` (`ScientificCalcLexer.java`, `ScientificCalcParser.java`, `ScientificCalcVisitor.java`, `ScientificCalcBaseVisitor.java`, `*.tokens`/`*.interp`) fuera del repositorio. Solo el código fuente está en versionado. La lista completa está en `.gitignore`.
 
 ## Descarga y ejecución
 
