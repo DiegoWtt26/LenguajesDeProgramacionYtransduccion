@@ -1,5 +1,11 @@
 # Tarea Conjuntos
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincón
+
 Cálculo de PRIMEROS, SIGUIENTES y PREDICCIÓN para las dos gramáticas, con tabla LL(1).
 
 ## Archivos

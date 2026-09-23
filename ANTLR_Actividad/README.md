@@ -4,7 +4,7 @@
 
 - Camilo Bernal
 - Diego Moreno
-- Yeisson Rincon
+- Yeisson Rincón
 
 ## Descripción
 

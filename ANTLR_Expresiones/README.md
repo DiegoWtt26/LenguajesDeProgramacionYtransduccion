@@ -1,5 +1,11 @@
 # Tareas ANTLR — Análisis sintáctico (Linux)
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincón
+
 Programas Python + ANTLR 4.13.2 de las diapos 11, 12/13 y 15. Entorno Linux (bash).
 
 ## Estructura

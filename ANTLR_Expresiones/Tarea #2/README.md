@@ -1,5 +1,11 @@
 # Tarea #2 — Parse Tree vs AST (diapos 12 y 13)
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincón
+
 Gramática por niveles (`Expr12.g4`):
 `E -> E + T | T`, `T -> T * F | F`, `F -> id | num | (E)`.
 

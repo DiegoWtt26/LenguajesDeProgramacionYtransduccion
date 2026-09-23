@@ -1,5 +1,11 @@
 # Tarea #1 — Diapo 11 tal cual
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincón
+
 Gramática de la diapo 11 en ANTLR (`Expr11.g4`), sin modificaciones:
 
 ```

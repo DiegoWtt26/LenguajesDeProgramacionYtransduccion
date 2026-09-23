@@ -6,7 +6,7 @@ Soluciones a ejercicios del capítulo sobre Flex y Bison: calculadora del libro,
 
 - Camilo Bernal
 - Diego Moreno
-- Yeisson Rincon
+- Yeisson Rincón
 
 ---
 

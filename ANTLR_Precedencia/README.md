@@ -1,5 +1,11 @@
 # Precedencia y asociatividad (Linux)
 
+## Integrantes
+
+- Camilo Bernal
+- Diego Moreno
+- Yeisson Rincón
+
 ## Las 4 gramáticas
 
 Mismo lenguaje en las 4 (`+ - * /`, paréntesis, `NUM`, división real):
