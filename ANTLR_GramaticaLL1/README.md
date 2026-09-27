@@ -22,7 +22,7 @@ pip install antlr4-python3-runtime==4.13.2
 
 * Opcional, para ver el árbol sintáctico: `pip install antlr4-tools`
 
-![CA1](capturas/CA1.png)
+<p align="center"><img src="capturas/CA1.png" alt="CA1"></p>
 
 ## ¿De qué trata la actividad?
 
@@ -62,56 +62,56 @@ python3 conjuntos.py Calculadora.g4
 
 En `Calculadora.g4` están las reglas léxicas (en mayúscula) y las sintácticas (en minúscula). Para que sea LL(1) no tiene recursión por la izquierda, por eso las reglas quedan como `expr : term exprP` en vez de `expr : expr + term`. Las alternativas vacías son las producciones ε.
 
-![CA2](capturas/CA2.png)
+<p align="center"><img src="capturas/CA2.png" alt="CA2"></p>
 
 Con ANTLR generamos el lexer, el parser y el visitor en Python:
 
-![CA3](capturas/CA3.png)
+<p align="center"><img src="capturas/CA3.png" alt="CA3"></p>
 
 Probamos que ANTLR reconoce el lenguaje con el archivo `entradas/prueba.txt`:
 
-![CA4](capturas/CA4.png)
+<p align="center"><img src="capturas/CA4.png" alt="CA4"></p>
 
-![CA5](capturas/CA5.png)
+<p align="center"><img src="capturas/CA5.png" alt="CA5"></p>
 
 ### 2. Errores léxicos y sintácticos
 
 En `errores.py` reemplazamos los mensajes de error de ANTLR por unos en español, con línea y columna. Además los errores se guardan en una lista, y si hay alguno el programa no pasa a la parte semántica.
 
-![CA6](capturas/CA6.png)
+<p align="center"><img src="capturas/CA6.png" alt="CA6"></p>
 
 ### 3. Análisis semántico
 
 En `semantico.py` recorremos el árbol con un Visitor. Ahí se evalúan las expresiones, se guardan las variables en la tabla de símbolos y se detectan errores como variables no declaradas, división entre cero o módulo entre cero.
 
-![CA7](capturas/CA7.png)
+<p align="center"><img src="capturas/CA7.png" alt="CA7"></p>
 
 ### 4. Programa principal
 
 `main.py` recibe el archivo de entrada y ejecuta las tres fases en orden: léxica, sintáctica y semántica.
 
-![CA8](capturas/CA8.png)
+<p align="center"><img src="capturas/CA8.png" alt="CA8"></p>
 
 ### 5. Pruebas
 
 Programa correcto con todas las operaciones:
 
-![CA9](capturas/CA9.png)
+<p align="center"><img src="capturas/CA9.png" alt="CA9"></p>
 
 Error léxico (caracteres que no pertenecen al lenguaje):
 
-![CA10](capturas/CA10.png)
+<p align="center"><img src="capturas/CA10.png" alt="CA10"></p>
 
 Errores sintácticos (falta `;`, falta `)` y operador sin operando):
 
-![CA11](capturas/CA11.png)
+<p align="center"><img src="capturas/CA11.png" alt="CA11"></p>
 
 Errores semánticos (variable no declarada, división y módulo entre cero):
 
-![CA12](capturas/CA12.png)
+<p align="center"><img src="capturas/CA12.png" alt="CA12"></p>
 
 ### 6. Conjuntos de Primeros, Siguientes y Predicción
 
 `conjuntos.py` lee la gramática directamente del archivo `Calculadora.g4`, calcula los tres conjuntos y revisa que los conjuntos de predicción de cada no terminal no tengan elementos en común, que es la condición para que la gramática sea LL(1).
 
-![CA13](capturas/CA13.png)
+<p align="center"><img src="capturas/CA13.png" alt="CA13"></p>
