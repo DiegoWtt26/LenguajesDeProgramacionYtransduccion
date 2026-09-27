@@ -39,7 +39,6 @@ ANTLR se encarga de generar el analizador léxico y sintáctico a partir de la g
 ```
 proyecto_ll1/
 ├── Calculadora.g4      gramática (parte léxica y sintáctica)
-├── generated/          código que genera ANTLR
 ├── errores.py          errores léxicos y sintácticos
 ├── semantico.py        análisis semántico (Visitor)
 ├── main.py             programa principal
@@ -51,7 +50,6 @@ proyecto_ll1/
 ## Cómo ejecutarlo
 
 ```
-antlr4 -Dlanguage=Python3 -visitor -no-listener -o generated Calculadora.g4
 python3 main.py entradas/correcto.txt
 python3 conjuntos.py Calculadora.g4
 ```
