@@ -1,0 +1,17 @@
+# Prueba de todas las operaciones
+a = 10;
+b = 3;
+suma = a + b;
+resta = a - b - 2;
+producto = a * b;
+division = a / 4;
+modulo = a % b;
+modulo2 = a mod 4;
+absoluto = abs(b - a);
+absoluto2 = |b - a|;
+negativo = -a + 1;
+anidado = abs(|b - 20| - 30);
+seno = sin(0);
+coseno = cos(0);
+tangente = tan(0);
+mezcla = (a + b) * 2 - abs(sin(0) - 4) % 3;

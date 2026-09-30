@@ -1,0 +1,38 @@
+# Gramática LL(1) del lenguaje
+# Una producción por línea. ε = vacío. $ = fin de archivo.
+# Los no terminales son los que aparecen a la izquierda de ->
+
+inicio    -> programa $
+
+programa  -> sentencia programa
+programa  -> ε
+
+sentencia -> id = expr ;
+
+expr      -> term exprP
+
+exprP     -> + term exprP
+exprP     -> - term exprP
+exprP     -> ε
+
+term      -> factor termP
+
+termP     -> * factor termP
+termP     -> / factor termP
+termP     -> mod factor termP
+termP     -> % factor termP
+termP     -> ε
+
+factor    -> - factor
+factor    -> primario
+
+primario  -> num
+primario  -> id
+primario  -> ( expr )
+primario  -> | expr |
+primario  -> func ( expr )
+
+func      -> sin
+func      -> cos
+func      -> tan
+func      -> abs
